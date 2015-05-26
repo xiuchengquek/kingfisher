@@ -1,32 +1,40 @@
 package kingfisher;
 
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+//import org.springframework.data.mongodb.core.mapping.DBRef;
+//import org.springframework.data.mongodb.core.mapping.Document;
+//import org.springframework.data.mongodb.core.mapping.Field;
+
+import javax.persistence.*;
+
+
+import java.io.Serializable;
 import java.util.*;
 
 
 /**
  * Created by xiuchengquek on 26/05/15.
  */
-@Document
-public class KingFisherModel {
+@Entity
+public class KingFisherModel implements Serializable{
 
-    static final int MAX_LENGTH_DESCRIPTION = 500;
-    static final int MAX_LENGTH_TITLE = 100;
+
 
     @Id
-    private String id;
+    @GeneratedValue
+    private long id;
+
+
+    //private String id;
 
     private String title;
 
-    private :wq data;
+    private String data;
 
     // constructor for populating entries
-    public KingFisherModel() {};
+    //public KingFisherModel() {};
 
+    protected KingFisherModel(){};
     public KingFisherModel(String title, String data) {
         this.title = title;
         this.data = data;
@@ -49,6 +57,6 @@ public class KingFisherModel {
         this.title = title;
     }
 
-    public String getId() { return id;}
+    public Long getId() { return id;}
 
 }

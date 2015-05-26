@@ -23,7 +23,7 @@ public class KingFisherRestController {
     private KingFisherRepository repo;
 
     @RequestMapping(method= RequestMethod.GET)
-    public List<KingFisherModel> getAll() {
+    public Iterable<KingFisherModel> getAll() {
         return repo.findAll();
     }
 
