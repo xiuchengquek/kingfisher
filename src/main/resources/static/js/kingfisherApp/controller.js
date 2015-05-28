@@ -10,8 +10,6 @@ angular.module('kingFisherApp')
         $scope.postreply = {};
 
         $scope.update = function(data) {
-            alert(data);
-            $scope.master.data = angular.copy(data);
             kingFisherData.postData(data).then(
                 function(results){
                     $scope.postreply = results
