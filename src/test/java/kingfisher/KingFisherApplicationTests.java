@@ -59,8 +59,8 @@ public class KingFisherApplicationTests {
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 
 		repo.deleteAll();
-		test = new KingFisherModel("lol" , "chey");
-		test2 = new KingFisherModel("death" , "great");
+		test = new KingFisherModel("test" , "maf", "cnv", "clinical");
+		test2 = new KingFisherModel("test2" , "maf2", "cnv2", "clinical2");
 		repo.save(test);
 		repo.save(test2);
 
@@ -73,8 +73,15 @@ public class KingFisherApplicationTests {
 
     @Test public void homeView() throws Exception{
         mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML+";charset=UTF-8"));
+                .andExpect(status().isOk());
+
+    }
+
+
+    @Test public void protoTypeView() throws Exception{
+        mockMvc.perform(get("/prototype"))
+                .andExpect(status().isOk());
+
     }
 
 	@Test
@@ -96,7 +103,7 @@ public class KingFisherApplicationTests {
         }.getType();
 
 
-        MvcResult results = mockMvc.perform(get("/rest?title=lol"))
+        MvcResult results = mockMvc.perform(get("/rest?title=test"))
 				.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON + ";charset=UTF-8"))
                 .andReturn();
@@ -105,7 +112,7 @@ public class KingFisherApplicationTests {
         String content = results.getResponse().getContentAsString();
         List<KingFisherModel> kingFisherModelList = gson.fromJson(content, listType);
 
-        assertEquals(test.getData(), kingFisherModelList.get(0).getData());
+        assertEquals(test.getMaf(), kingFisherModelList.get(0).getMaf());
 
 
 
@@ -118,8 +125,10 @@ public class KingFisherApplicationTests {
 
         Map<String, String> testParameters = new HashMap<>();
 
-        testParameters.put("title", "HELLOW");
-        testParameters.put("data", "DARTH");
+        testParameters.put("title", "test3");
+        testParameters.put("maf", "maf3");
+        testParameters.put("cnv", "cnv3");
+        testParameters.put("clinical", "clinical3");
 
         String testJson = gson.toJson(testParameters);
 
@@ -134,7 +143,11 @@ public class KingFisherApplicationTests {
        String content = results.getResponse().getContentAsString();
        KingFisherModel kingFisherModel = gson.fromJson(content, KingFisherModel.class);
 
-       assertEquals("HELLOW", kingFisherModel.getTitle());
+       assertEquals("test3", kingFisherModel.getTitle());
+       assertEquals("maf3", kingFisherModel.getMaf());
+       assertEquals("cnv3", kingFisherModel.getCnv());
+       assertEquals("clinical3", kingFisherModel.getClinical());
+
 
 
 
