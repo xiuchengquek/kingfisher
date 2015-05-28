@@ -87,20 +87,47 @@
 <!-- Home Page
 ==========================================-->
 <div id="tf-about" class="text-center">
-    <div class="container">
-        <div class="row">
+    <div class="container" ng-app="kingFisherApp">
+        <div class="row"  ng-controller="kingFisherCtrl">
 
-            <div ng-app="kingFisherApp" class="col-md-6 col-md-offset-1 col-sm-4">
-                <div ng-controller=""
+            <div class="col-md-3 col-sm-4">
+                <div>
+                    <form novalidate class="data-form">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input id="title" name="title" class="form-control" type="text" ng-model="data.title" value="title" /><br />
+                        </div>
 
+                        <div class="form-group">
+                            <label for="maf">MAF:</label>
+                             <textarea id="maf" name="maf" class="form-control" ng-model="data.maf" required="maf data required" value="maf" rows="5"></textarea><br />
+                        </div>
+                        <div class="form-group">
+                            <label for="cnv">CNv:</label>
+                            <textarea id="cnv"  class="form-control" name="cnv" ng-model="data.cnv" value="cnv" rows="5"></textarea><br />
+                        </div>
+                        <div class="form-group">
+                            <label for="clinical">Clinical Data :</label>
+                            <textarea id="clinical"  class="form-control" name="clinical" ng-model="data.clinical" required="clinical data required" value="clinical" rows="5"></textarea><br />
+                        </div>
+                        <div class="form-group">
 
+                            <button  ng-click="update(data)"> Catch! </button>
 
+                        </div>
 
+                    </form>
 
+                </div>
             </div>
+        <div data-results class="col-md-9 col-sm-8">
+        {{ data }}
+            this is : {{ postreply.data }}
 
 
-            </div>
+        </div>
+
+        </div>
     </div>
 </div>
 
@@ -112,7 +139,7 @@
 <nav id="footer" class="fnav navbar-fixed-bottom">
     <div class="container ">
         <div class="pull-left ">
-            <p>ALL RIGHTS RESERVED. COPYRIGHT © 2015. Modified design by Quek Xiu Cheng. Orignal Template by <a href="https://dribbble.com/shots/1817781--FREEBIE-Spirit8-Digital-agency-one-page-template">Robert Berki</a> and Coded by <a href="https://dribbble.com/jennpereira">Jenn Pereira</a></p>
+            <p>ALL RIGHTS RESERVED. COPYRIGHT © 2015. Modified design by Quek Xiu Cheng. Orignal Template by <a href="https://dribbble.com/shots/1817781--FREEBIE-Spirit8-Digital-agency-one-page-template">Robert Berki</a> / <a href="https://dribbble.com/jennpereira">Jenn Pereira</a></p>
         </div>
         <div class="pull-right fnav">
             <ul class="footer-social" style="visibility: hidden">
