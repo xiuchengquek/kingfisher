@@ -17,10 +17,17 @@ import javax.servlet.http.HttpServletResponse;
 public class KingFisherController {
 
     @RequestMapping(value="/", method = {RequestMethod.GET})
-    public String greeting() {
-        return "greeting";
+    public String index() {
+        return "index";
 
     }
+
+    @RequestMapping(value="/prototype", method = {RequestMethod.GET})
+    public String prototype() {
+        return "prototype";
+
+    }
+
 }
 
 
