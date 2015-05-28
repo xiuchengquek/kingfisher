@@ -120,12 +120,27 @@
 
                 </div>
             </div>
-        <div data-results class="col-md-9 col-sm-8">
-        {{ data }}
-            this is : {{ postreply.data }}
+
+            <div data-results class="col-md-3 col-sm-4">
+                <h3> User Input Results </h3>
+                <li ng-repeat="(key, value) in data"> {{key}} : {{value}} </li>
 
 
-        </div>
+
+
+            </div>
+
+            <div data-results class="col-md-3 col-sm-4">
+            <h3> Post Return Results </h3>
+                <li ng-repeat="(key, value) in postreply.data"> {{key}} : {{value}} </li>
+
+
+
+
+
+            </div>
+
+
 
         </div>
     </div>
