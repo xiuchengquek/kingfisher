@@ -1,4 +1,4 @@
-package kingfisher;
+package org.oncoblocks.kingfisher;
 
 //import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.CrudRepository;
