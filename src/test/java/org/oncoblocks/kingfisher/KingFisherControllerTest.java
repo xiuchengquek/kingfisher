@@ -1,4 +1,4 @@
-package kingfisher;
+package org.oncoblocks.kingfisher;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,8 +35,12 @@ import java.util.Map;
 import java.util.HashMap;
 
 
-
-
+/**
+ * Testsuite that ensure GET / POST request to the KingFisherController
+ * and KingFisherRest handled accordingly
+ * @see KingFisherRestController
+ * @see org.oncoblocks.kingfisher.KingFisherController
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = KingFisherApplication.class)
 @WebAppConfiguration
@@ -58,7 +62,10 @@ public class KingFisherControllerTest {
     Gson gson = new GsonBuilder().create();
 
 
-    // Setup database and mvc
+    /**
+     * Set up mock data in database
+     * @throws Exception
+     */
     @Before
 	public void setUp() throws Exception {
 
@@ -80,7 +87,10 @@ public class KingFisherControllerTest {
 	@Autowired
 	WebApplicationContext wac;
 
-    //Test Case 0 : Check url work landing page and prototype page works
+    /**
+     * Test Case 0 : Check url work landing page and prototype page works
+     * @throws Exception
+     */
     public void testGet() throws Exception{
 
         mockMvc.perform(get("/"))
@@ -91,12 +101,12 @@ public class KingFisherControllerTest {
 
     }
 
-
-
-     //Test Case 1 : Testing Get method from the rest api
+    /**
+     *  Test Case 1 : Testing Get method from the rest api
+     * @throws Exception
+     */
 	@Test
 	public void testRestGet() throws Exception{
-
 
         List<KingFisherModel> expectedList =  Arrays.asList(test, test2);
         String expectedListString = gson.toJson(expectedList);
@@ -121,8 +131,9 @@ public class KingFisherControllerTest {
         assertEquals(test.getMaf(), kingFisherModelList.get(0).getMaf());
 
 	}
-
-    //Test Case 2 : Check that post works
+    /**
+     * Test Case 2 : Check that post works
+     **/
     @Test
     public void testRestPost() throws Exception {
 
