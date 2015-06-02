@@ -36,6 +36,7 @@ import java.util.HashMap;
 
 
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = KingFisherApplication.class)
 @WebAppConfiguration
