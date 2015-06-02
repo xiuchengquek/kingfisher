@@ -2,6 +2,10 @@
 
 Tumor Heterogeneity Analysis and Visualization Tool
 
+## Updates
+
+-02/06/2015 : Establish basic framework for testing. Provided basic documentation. Working landing page.
+
 
 ## Introduction
 
@@ -27,9 +31,11 @@ By default, kingfisher will use the following environment variable for your data
 
 ## Building / Testing KingFisher
 
+KingFisher uses JUnit and Jasmine for testing.
+
 ### To test kingfisher -  do the following
 
-`mvn test` - There are a total of 4 test.  Make sure your database is running
+`mvn test` - There are a total of 4 tests and 2 Jasmine Specs.  Make sure your database is running
 
 ### To build kingfisher
 
