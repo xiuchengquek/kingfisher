@@ -46,8 +46,15 @@ Pop your war file into your tomcat `webapp` directory
 For more information about deploying applications. Please refer to [tomcat documentation](https://tomcat.apache.org/tomcat-7.0-doc/appdev/deployment.html) or have a look at cbioportal's [wiki page](https://github.com/cBioPortal/cbioportal/wiki)
  
 
+## Route map
 
-
+Verb | Path | Status | Response  | Description
+-----|------|--------|-----------|-----
+GET | /     | 200    | index.html | `src/main/resources/template/index.html`
+GET | /prototype | 200 | prototype.html |  `src/main/resources/template/prototype.html`
+GET | /rest | 200 | application/json | JSON object of all entries in database
+POST| /rest | 200 |  xhr | Post data |
+GET | /js/* | 200 | *.js | various javascript libraries |
 
 
 
