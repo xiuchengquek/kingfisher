@@ -26,8 +26,18 @@ public class KingFisherModel implements Serializable{
     private String cnv;
     private String clinical;
 
-    // constructor for populating entries
     protected KingFisherModel(){};
+
+
+    /**
+     * constructor for populating entries
+     * data, cnv, clincal are json string
+     * title are user defined
+     * @param title Title of data Stinrg
+     * @param data Json string contain MAF
+     * @param cnv Json String Contain CNV data
+     * @param clinical Json String contain clinical data
+     */
     public KingFisherModel(String title, String data, String cnv, String clinical) {
         this.title = title;
         this.maf = data;
@@ -35,32 +45,33 @@ public class KingFisherModel implements Serializable{
         this.clinical = clinical;
     }
 
-    // getter to get maf
+    /** Returns maf **/
     public String getMaf() {
         return maf;
     }
 
-    // setter to set maf
+    /** Set maf value **/
     public void setMaf(String maf) {
         this.maf = maf;
     }
 
-    // getter to get title.
+    /** Returns title **/
     public String getTitle(){
         return title;
     }
 
+    /** Set title value **/
     public void setTitle(String title) {
         this.title = title;
     }
 
-    // getter to get cnv
+    /** Returns CNV value **/
     public String getCnv() { return cnv; }
 
-    // getter to get clinical
+    /** Returns Clinical Data **/
     public String getClinical() { return clinical; }
 
-    // getter to get id
+    /** Returns ID **/
     public Long getId() { return id;}
 
 }

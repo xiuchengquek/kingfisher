@@ -19,14 +19,21 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class KingFisherController {
 
-    // returns home page
+    /**
+     * Maps request at "/index" to index.html
+     *@return :  index
+     */
+
     @RequestMapping(value="/", method = {RequestMethod.GET})
     public String index() {
         return "index";
 
     }
 
-    // returns prototype page
+    /**
+     * Maps request at "/prototype" to prototype.html
+     * @return "prototype"
+     */
     @RequestMapping(value="/prototype", method = {RequestMethod.GET})
     public String prototype() {
         return "prototype";

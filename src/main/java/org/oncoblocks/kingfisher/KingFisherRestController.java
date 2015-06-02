@@ -24,24 +24,31 @@ import java.util.List;
 @RequestMapping("/rest")
 public class KingFisherRestController {
 
-    /** Autowire configuration based on interface declare in KingFisherRepository **/
+    /** Autowire configuration based on interface declare in KingFisherRepository
+     * @see KingFisherRepository
+     * **/
     @Autowired
     private KingFisherRepository repo;
 
-    /** Handle GET request, return all items in the database **/
+    /**
+     * Method to andle GET request, return all items in the database
+     * @return All KingFisherModel Objects in the database **/
     @RequestMapping(method= RequestMethod.GET)
     public Iterable<KingFisherModel> getAll() {
         return repo.findAll();
     }
 
-    /** Handle GET request, return all items with matching title in the database **/
+    /** Handle GET request, return all items with matching title in the database
+     * @return List of KingFisherModel Objects with matching title **/
     @RequestMapping(params={"title"}, method = RequestMethod.GET)
     List<KingFisherModel> findByTitle(@Param("title") String title) {
         return repo.findByTitle(title);
     }
 
-    /** Handle POST request, add new entry base on KingFisherModel.
+    /**
+     * Handle POST request, add new entry base on KingFisherModel.
      * Returns the same item that was posted.
+     * @return Response with Kingfisher model and HTTP status == 200
      */
     @RequestMapping(method=RequestMethod.POST)
     ResponseEntity<KingFisherModel> create(@RequestBody KingFisherModel kingFisherModel) {

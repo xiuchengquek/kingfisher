@@ -20,7 +20,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 public class KingFisherStaticConfig extends WebMvcConfigurerAdapter {
 
 
-    // Declare new resource location for static files
+    /** Declare new resource location for static files **/
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {
             "classpath:/META-INF/resources/", "classpath:/resources/",
             "classpath:/static/", "classpath:/public/", "classpath:/templates"
@@ -39,7 +39,12 @@ public class KingFisherStaticConfig extends WebMvcConfigurerAdapter {
         }
     }
 
-    /** add configuration to serve html files when controllers return string **/
+    /**
+     * add configuration to serve html files when controllers return string
+     * @return resolver that add "templates" as prefix and ".html" as suffix to strings returned
+     * from controller
+     *
+     * **/
     @Bean
     public ViewResolver getViewResolver(){
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
