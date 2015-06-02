@@ -3,8 +3,7 @@
  */
 
 
-angular.module('kingFisherApp');
-
+//angular.module('kingFisherApp');
 
 angular.module('kingFisherApp')
     .factory('kingFisherData', function($http){

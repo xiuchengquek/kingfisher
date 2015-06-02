@@ -23,6 +23,10 @@
 		<java.version>1.8</java.version>
 	</properties>
 
+
+
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -57,7 +61,12 @@
 			<scope>test</scope>
 		</dependency>
 
+
+
+
 	</dependencies>
+
+
 
 	
 	<build>
@@ -96,6 +105,65 @@
 					</extraDependencies>
 				</configuration>
 			</plugin>
+
+
+
+			<plugin>
+				<groupId>com.github.klieber</groupId>
+				<artifactId>phantomjs-maven-plugin</artifactId>
+				<version>0.7</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>install</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<version>1.9.8</version>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.searls</groupId>
+				<artifactId>jasmine-maven-plugin</artifactId>
+				<version>1.3.1.6</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skipJasmineTests>false</skipJasmineTests>
+					<webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
+					<webDriverCapabilities>
+						<capability>
+							<name>phantomjs.binary.path</name>
+							<value>${phantomjs.binary}</value>
+						</capability>
+					</webDriverCapabilities>
+
+
+					<jsSrcDir>${basedir}/src/main/resources/static/js/kingfisherApp/</jsSrcDir>
+					<jsTestSrcDir>${basedir}/src/test/resources/static/js/</jsTestSrcDir>
+					<preloadSources>
+						<source>${basedir}/src/main/resources/static/js/angular.min.js</source>
+						<source>${basedir}/src/main/resources/static/js/angular-resource.min.js</source>
+						<source>${basedir}/src/main/resources/static/js/angular-mocks.js</source>
+						<source>${basedir}/src/main/resources/static/js/kingfisherApp/app.js</source>
+						<source>${basedir}/src/main/resources/static/js/kingfisherApp/services.js</source>
+
+						<source>${basedir}/src/main/resources/static/js/kingfisherApp/controller.js</source>
+
+					</preloadSources>
+
+				</configuration>
+			</plugin>
+
+
 		</plugins>
 
 	</build>
