@@ -37,6 +37,10 @@ KingFisher uses JUnit and Jasmine for testing.
 
 `mvn test` - There are a total of 4 tests and 2 Jasmine Specs.  Make sure your database is running
 
+### To run Jasmine Test alone
+
+`mvn jasmine:bdd` - This will launch server that binds to port 8234 on the localhost `localhost:8234`
+
 ### To build kingfisher
 
 `mvn build` - This will generate a war file in `target/` . It should have the following filename: `kingfisherboot-X.X.X.RELEASE.war` where `X.X.X` refer to the version number of the application.
