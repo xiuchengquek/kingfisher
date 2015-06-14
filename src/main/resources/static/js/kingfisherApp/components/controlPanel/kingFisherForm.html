@@ -1,0 +1,91 @@
+<form novalidate class="data-form">
+    <div class="form-group" class="col-md-6">
+        <label class=col-md-1" for="title">Title</label>
+        <input class=col-md-5" id="title" name="title" class="form-control"
+               type="text" ng-model="data.title" value="title"/><br/>
+
+
+        <span ng-click="loadSample()"> load sample data </span>
+    </div>
+    <div class="panel-group" id="inputAccordion" role="tablist"
+
+
+
+
+         aria-multiselectable="true">
+        <div class="panel panel-default" role="tab" id="mafPanel">
+
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#inputAccordion"
+                   href="#collapseMaf " aria-expanded="true"
+                   aria-controls="collapseMaf">
+                    Step #1 : Please Enter MAF
+                </a>
+            </h4>
+        </div>
+        <div id="collapseMaf" class="panel-collapse collapse in" role="tabpanel"
+             aria-lablledby="mafPanel">
+            <div class="form-group">
+                <label for="maf">MAF:</label>
+                        <textarea id="maf" name="maf" class="form-control"
+                                  ng-model="data.maf" required="maf data required"
+                                  value="maf" rows="4"></textarea><br/>
+            </div>
+        </div>
+
+
+        <div class="panel panel-default" role="tab" id="cnvPanel"
+             aria-multiselectable="true">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#inputAccordion"
+                   href="#collapsecnvPanel"
+                   aria-expanded="true" aria-controls="collapsecnvPanel">
+                    Step #2: Enter CNV data
+                </a>
+            </h4>
+        </div>
+        <div id="collapsecnvPanel" class="panel-collapse collapse"
+             role="tabpanel"
+             aria-labelledby="cnvPanel">
+            <div class="form-group">
+                <label for="cnv">CNv:</label>
+                                                    <textarea id="cnv" class="form-control" name="cnv"
+                                                              ng-model="data.cnv" value="cnv" rows="4"></textarea><br/>
+            </div>
+        </div>
+
+
+        <div class="panel panel-default" role="tab" id="clincalPanel"
+             aria-multiselectable="true">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#inputAccordion"
+                   href="#collapseclincalPanel"
+                   aria-expanded="true" aria-controls="collapseclincalPanel">
+
+                    Step #3 : Input Clinical Data
+                </a>
+            </h4>
+        </div>
+        <div id="collapseclincalPanel" class="panel-collapse collapse"
+             role="tabpanel"
+             aria-labelledby="clincalPanel">
+
+
+            <div class="form-group">
+                <label for="clinical">Clinical Data :</label>
+                <textarea id="clinical" class="form-control" name="clinical"
+                          ng-model="data.clinical" required="clinical data required"
+                          value="clinical" rows="4"></textarea><br/>
+            </div>
+
+
+        </div>
+
+
+        <div class="form-group">
+
+            <button ng-click="update()"> Catch!</button>
+
+        </div>
+    </div>
+</form>

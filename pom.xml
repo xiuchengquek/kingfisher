@@ -50,6 +50,22 @@
             <version>2.2.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.2</version>
+        </dependency>
+
+        <!-- weka library for hclust -->
+        <dependency>
+            <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>weka-dev</artifactId>
+            <version>3.7.10</version>
+        </dependency>
+
+
+
+
         <!-- Springboot Framework-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -57,11 +73,13 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-batch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
 
 
@@ -72,6 +90,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+
+
 
             <!-- PhantomJS installation for Jasmine-->
             <plugin>
@@ -104,7 +125,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <skipJasmineTests>false</skipJasmineTests>
+                    <skipJasmineTests>true</skipJasmineTests>
                     <webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
                     <webDriverCapabilities>
                         <capability>
@@ -115,16 +136,30 @@
 
                     <!-- Set SrcDir and TestSrc Dir to allow Jasmine to watch for changes and autoreload-->
                     <jsSrcDir>${basedir}/src/main/resources/static/js/kingfisherApp/</jsSrcDir>
-                    <jsTestSrcDir>${basedir}/src/test/resources/static/js/</jsTestSrcDir>
+
+                    <jsTestSrcDir>${basedir}/src/test/resources/</jsTestSrcDir>
+
+                    <!--
+                    <sourceIncludes>
+                        <include>${basedir}/src/main/resources/static/js/kingfisherApp/**/*</include>
+                        <include>js/*.js</include>
+                        <include>shared/dataSources/*.js</include>
+                        <include>**/*.js</include>
+                        <include>**/*.coffee</include>
+                    </sourceIncludes>
+                    -->
 
                     <!-- Required JS libraries for jasmine tests-->
                     <preloadSources>
-                        <source>${basedir}/src/main/resources/static/js/angular.min.js</source>
-                        <source>${basedir}/src/main/resources/static/js/angular-resource.min.js</source>
-                        <source>${basedir}/src/main/resources/static/js/angular-mocks.js</source>
-                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/app.js</source>
-                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/services.js</source>
-                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/controller.js</source>
+                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/js/angular.min.js</source>
+                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/js/angular-resource.min.js</source>
+                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/js/angular-mocks.js</source>
+                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/js/jquery.1.11.1.js</source>
+                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/js/bootstrap.js</source>
+                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/main.js</source>
+
+
+
                     </preloadSources>
                 </configuration>
             </plugin>

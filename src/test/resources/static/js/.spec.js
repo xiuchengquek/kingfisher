@@ -1,19 +1,12 @@
-/**
- * Created by xiuchengquek on 2/06/15.
- */
 
 
-
-
-describe("kingFisherCtrl", function() {
+describe("kingFishserCtrl", function() {
 
     beforeEach(module("kingFisherApp"));
 
-
-
     var $controller;
     var $scope;
-    var $q
+    var $q;
 
     beforeEach(inject(function(_$rootScope_, _$controller_, _$q_){
 
@@ -27,15 +20,9 @@ describe("kingFisherCtrl", function() {
                 var deferred = $q.defer();
                 deferred.resolve(output);
 
-
-
-
-
                 return deferred.promise;
             }
-
-
-        }
+        };
 
         $scope = _$rootScope_.$new();
         $controller = _$controller_('kingFisherCtrl', {
@@ -67,11 +54,6 @@ describe("kingFisherCtrl", function() {
         };
 
         expect($scope.postreply.title).toBe('title1')
-
-
-
-
-
     });
 
     it("Change in User input should not affect posted results without submitting", function(){
@@ -95,4 +77,7 @@ describe("kingFisherCtrl", function() {
 
         expect($scope.postreply.title).toBe('title1')
     })
+
+
+    it("Check that mock data is loaded")
 })

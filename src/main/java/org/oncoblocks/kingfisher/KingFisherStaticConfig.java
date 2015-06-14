@@ -4,6 +4,7 @@
 
 package org.oncoblocks.kingfisher;
 
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;

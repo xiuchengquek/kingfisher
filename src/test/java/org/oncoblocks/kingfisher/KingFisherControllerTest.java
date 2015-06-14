@@ -91,6 +91,7 @@ public class KingFisherControllerTest {
      * Test Case 0 : Check url work landing page and prototype page works
      * @throws Exception
      */
+    @Test
     public void testGet() throws Exception{
 
         mockMvc.perform(get("/"))
@@ -165,6 +166,8 @@ public class KingFisherControllerTest {
         assertEquals("clinical3", kingFisherModel.getClinical());
 
     }
+
+
 
     // clear database
     @After
