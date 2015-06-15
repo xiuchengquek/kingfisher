@@ -151,7 +151,16 @@ public class KingFisherHClustTest {
                 .andReturn();
 
         String content = results.getResponse().getContentAsString();
-        assertThat(content, containsString("HClust Started but did not succeed"));
+        assertThat(content, containsString("Malformed Data Structure. Please Check Data"));
+
+        results = mockMvc.perform(get("/hclust")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ timePoint :[\"a\"], vafMap : {a : [0.1,0.2,0.33]}}"))
+                .andExpect(status().isNotAcceptable())
+                .andReturn();
+
+        content = results.getResponse().getContentAsString();
+        assertThat(content, containsString("Cluster Failed. Please Check Data"));
 
 
     }

@@ -14,6 +14,8 @@ angular.module('kingFisherApp')
                     $scope.postreply = results
                 }
             )
+
+            kingFisherData.parseStringToData($scope.data)
         };
 
 
@@ -27,6 +29,7 @@ angular.module('kingFisherApp')
                     "SETBP1_p.D868N\t0.1\t0.24\t0.32"]
             mock = mock.join("\n")
             $scope.data.maf = mock
+
         };
 
 

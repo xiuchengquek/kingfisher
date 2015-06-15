@@ -5,6 +5,7 @@
 package org.oncoblocks.kingfisher;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import org.oncoblocks.kingfisher.Adaptors.hclustAdaptor;
 
 
@@ -81,7 +82,7 @@ public class KingFisherRestController {
 
         HttpStatus returnCode = HttpStatus.NOT_ACCEPTABLE;
 
-        String hclustResults = "HClust Started but did not succeed";
+        String hclustResults =  "Started but did not succeed";
 
         // Try and see if it works. else return error message and httpstatus. Not sure of what exception weka might throw
         try {
@@ -89,8 +90,12 @@ public class KingFisherRestController {
             hclustResults =  KingFisherHClust.doClust(hclust.getVafMap(), hclust.getTimePoint());
             returnCode = HttpStatus.OK;
         }
-        catch(Exception e){
+        catch(JsonParseException e){
+            hclustResults = "Malformed Data Structure. Please Check Data";
+        }
 
+        catch(Exception e){
+            hclustResults = "Cluster Failed. Please Check Data";
         }
 
         finally {
