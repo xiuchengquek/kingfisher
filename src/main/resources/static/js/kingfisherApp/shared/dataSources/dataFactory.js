@@ -4,12 +4,11 @@
 
 
 
-angular.module('dataFactory', ['ngResource'])
 
 
 
 
-angular.module('dataFactory').factory('kingFisherData', function ($http, $log, $q) {
+angular.module('kingFisherApp').factory('kingFisherData', function ($http, $log, $q) {
     // TODO: Add function to validate form.
 
     // main object to return
@@ -25,7 +24,7 @@ angular.module('dataFactory').factory('kingFisherData', function ($http, $log, $
      * @returns :{Object} parsedData 'timepoint' - column name and 'data' -
      * array of object with the key being the gene name and the value an array of vaf
      **/
-    sharedDataService.parseStringToDataf = function(vafString) {
+    sharedDataService.parseStringToData = function(vafString) {
 
         var vafList = [];
         var geneName;

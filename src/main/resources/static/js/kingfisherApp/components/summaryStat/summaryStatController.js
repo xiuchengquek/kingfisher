@@ -6,6 +6,6 @@
 angular.module("kingFisherApp")
     .controller("summaryStat", function(){
 
-
+        console.log('lol')
 
     });

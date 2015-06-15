@@ -1,15 +1,18 @@
+/**
+ * Created by xiuchengquek on 13/06/15.
+ */
+
 package org.oncoblocks.kingfisher;
 
+import org.oncoblocks.kingfisher.Adaptors.hclustAdaptor;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.CoreMatchers.containsString;
 
 import com.google.gson.Gson;
-import org.oncoblocks.kingfisher.Adaptors.hclustAdaptor;
-
+import weka.core.Attribute;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,36 +26,31 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import weka.core.Attribute;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
- * Created by xiuchengquek on 13/06/15.
+ * Unit test for Hiercherical Clustering
  */
-
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = KingFisherApplication.class)
 @WebAppConfiguration
 public class KingFisherHClustTest {
 
-
-    Map<String, List<Double>> mockVafMap = new HashMap<String, List<Double>>();
+    Map<String, List<Double>> mockVafMap = new HashMap<>();
     ArrayList<String> mockTimePoint;
     ArrayList<Attribute> mockAttributes;
     String mockNewick;
     Gson gson;
     String mockJson;
 
-
-
-
     @Autowired
     KingFisherRestController kingRestController;
-
-    @Autowired
-    KingFisherRepository repo;
 
     @Autowired
     WebApplicationContext wac;
@@ -62,8 +60,8 @@ public class KingFisherHClustTest {
 
     @Before
     public void setUp() throws Exception {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 
         mockVafMap.put("SRSF2_p.P95H", Arrays.asList(0.5, 0.68, 0.62));
         mockVafMap.put("RUNX1_p.R174*", Arrays.asList(0.49, 0.482, 0.49));
@@ -72,7 +70,7 @@ public class KingFisherHClustTest {
         mockVafMap.put("IDH2_p.R140Q", Arrays.asList(0.37, 0.16, 0.07));
         mockVafMap.put("SETBP1_p.D868N", Arrays.asList(0.1, 0.24, 0.32));
 
-        mockTimePoint = new ArrayList<String>();
+        mockTimePoint = new ArrayList<>();
         mockTimePoint.add("Pretreatment");
         mockTimePoint.add("C4D1");
         mockTimePoint.add("C7D1");
@@ -104,7 +102,7 @@ public class KingFisherHClustTest {
     }
 
     @Test
-    public void testMakeAttributes() throws Exception{
+    public void testKingFisherHClustMakeAttributes() throws Exception{
         ArrayList<Attribute> result = KingFisherHClust.makeAttributes(mockTimePoint);
         assertEquals(mockAttributes.size(), result.size());
         assertEquals(4, result.size());
@@ -115,23 +113,25 @@ public class KingFisherHClustTest {
 
         String results = KingFisherHClust.doClust(mockVafMap, mockTimePoint);
         assertThat(results, containsString("SRSF2_p.P95H:0.47571"));
-
     }
 
 
     @Test
-    public void testHClustAdaptor() throws Exception{
+    public void testKingFisherHClustAdaptor() throws Exception{
+
         gson = new Gson();
         hclustAdaptor hclust = gson.fromJson(mockJson, hclustAdaptor.class);
+
         assertEquals(mockTimePoint, hclust.getTimePoint());
         assertEquals(mockVafMap, hclust.getVafMap());
+
         String results = KingFisherHClust.doClust(hclust.getVafMap(), hclust.getTimePoint());
         assertThat(results, containsString("SRSF2_p.P95H:0.47571"));
 
     }
 
     @Test
-    public void testHClustRest() throws Exception{
+    public void testControllerDoHClust() throws Exception{
         MvcResult results = mockMvc.perform(get("/hclust")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mockJson))
@@ -139,9 +139,19 @@ public class KingFisherHClustTest {
                 .andReturn();
 
         String content = results.getResponse().getContentAsString();
-
         assertThat(content, containsString("SRSF2_p.P95H:0.47571"));
+    }
 
+    @Test
+    public void testControllerDoHCLustFail() throws Exception{
+        MvcResult results = mockMvc.perform(get("/hclust")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("FAIL"))
+                .andExpect(status().isNotAcceptable())
+                .andReturn();
+
+        String content = results.getResponse().getContentAsString();
+        assertThat(content, containsString("HClust Started but did not succeed"));
 
 
     }

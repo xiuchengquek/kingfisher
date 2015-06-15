@@ -2,14 +2,14 @@
  * Created by xiuchengquek on 28/05/15.
  */
 
+
 angular.module('kingFisherApp')
     .controller('kingFisherCtrl', function($scope, kingFisherData){
 
         $scope.data = {}
-        $scope.master = {};
         $scope.postreply = {};
         $scope.update = function() {
-            kingFisherData.postData($scope.master).then(
+            kingFisherData.postData($scope.data).then(
                 function(results){
                     $scope.postreply = results
                 }
@@ -27,19 +27,23 @@ angular.module('kingFisherApp')
                     "SETBP1_p.D868N\t0.1\t0.24\t0.32"]
             mock = mock.join("\n")
             $scope.data.maf = mock
-
-
-
-        }
+        };
 
 
 
 });
 
 
+
+/**
+ * Created by xiuchengquek on 14/06/15.
+ */
 angular.module('kingFisherApp')
     .directive('userinput', function(){
         return {
             templateUrl : "js/kingfisherApp/components/controlPanel/kingFisherForm.html"
         }
-    })
+    });
+
+
+

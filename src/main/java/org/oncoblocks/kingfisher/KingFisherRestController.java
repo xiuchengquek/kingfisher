@@ -20,7 +20,7 @@ import com.google.gson.JsonArray;
 import org.apache.commons.math3.ml.clustering.Cluster;
 
 
-
+import javax.xml.ws.Response;
 import java.util.List;
 
 /**
@@ -65,29 +65,39 @@ public class KingFisherRestController {
 
     }
 
+    /**
+     *
+     * @param data json content. Json object containing 2 key.  timePoint and vafMAP.
+     *             Timepoint contains an list of names for each timepoint
+     *             vafMap is an object containing mutation names as key and values are list containing double values
+     * @return response Http response String saying if HClust fail or
+     * @throws Exception
+     */
     @RequestMapping(value="/hclust", method=RequestMethod.GET)
     ResponseEntity<String> doHClust(@RequestBody String data) throws Exception {
 
         Gson gson = new Gson();
+        ResponseEntity response;
 
-        hclustAdaptor hclust = gson.fromJson(data, hclustAdaptor.class);
+        HttpStatus returnCode = HttpStatus.NOT_ACCEPTABLE;
 
-        HttpStatus returnCode = HttpStatus.OK;
+        String hclustResults = "HClust Started but did not succeed";
 
-        String hclustResults = "HClust did not succeed";
-
-        if (hclust == null){
-            returnCode = HttpStatus.NOT_ACCEPTABLE;
-        }
-        else {
+        // Try and see if it works. else return error message and httpstatus. Not sure of what exception weka might throw
+        try {
+            hclustAdaptor hclust = gson.fromJson(data, hclustAdaptor.class);
             hclustResults =  KingFisherHClust.doClust(hclust.getVafMap(), hclust.getTimePoint());
+            returnCode = HttpStatus.OK;
+        }
+        catch(Exception e){
+
         }
 
-        return new ResponseEntity<>(hclustResults, HttpStatus.OK);
+        finally {
+            response = new ResponseEntity<>(hclustResults, returnCode);
 
-
-
-
+        }
+        return response;
     }
 
 }
