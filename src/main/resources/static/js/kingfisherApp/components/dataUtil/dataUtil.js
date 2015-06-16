@@ -107,6 +107,47 @@ angular.module('dataUtil').factory('generalParser', function(){
 
 angular.module('dataUtil').factory('mafParser', function(generalParser){
 
+    /**
+     *     //Column Header of MAF file format in order
+     * var _mafColumnHeaders = [];
+     * _mafColumnHeaders.push("Hugo_Symbol");
+     * _mafColumnHeaders.push("Entrez_Gene_Id");
+     * _mafColumnHeaders.push("Center");
+     * _mafColumnHeaders.push("NCBI_Build");
+     * _mafColumnHeaders.push("Chromosome");
+     * _mafColumnHeaders.push("Start_Position");
+     * _mafColumnHeaders.push("End_Position");
+     * _mafColumnHeaders.push("Strand");
+     * _mafColumnHeaders.push("Variant_Classification");
+     * _mafColumnHeaders.push("Variant_Type");
+     * _mafColumnHeaders.push("Reference_Allele");
+     * _mafColumnHeaders.push("Tumor_Seq_Allele1");
+     * _mafColumnHeaders.push("Tumor_Seq_Allele2");
+     * _mafColumnHeaders.push("dbSNP_RS");
+     * _mafColumnHeaders.push("dbSNP_Val_Status");
+     * _mafColumnHeaders.push("Tumor_Sample_Barcode");
+     * _mafColumnHeaders.push("Matched_Norm_Sample_Barcode");
+     * _mafColumnHeaders.push("Match_Norm_Seq_Allele1");
+     * _mafColumnHeaders.push("Match_Norm_Seq_Allele2");
+     * _mafColumnHeaders.push("Tumor_Validation_Allele1");
+     * _mafColumnHeaders.push("Tumor_Validation_Allele2");
+     * _mafColumnHeaders.push("Match_Norm_Validation_Allele1");
+     * _mafColumnHeaders.push("Match_Norm_Validation_Allele2");
+     * _mafColumnHeaders.push("Verification_Status");
+     * _mafColumnHeaders.push("Validaton_Status");
+     * _mafColumnHeaders.push("Mutation_Status");
+     * _mafColumnHeaders.push("Sequencing_Phase");
+     * _mafColumnHeaders.push("Sequence_Source");
+     * _mafColumnHeaders.push("Validation_Method");
+     * _mafColumnHeaders.push("Score");
+     * _mafColumnHeaders.push("BAM_File");
+     * _mafColumnHeaders.push("Sequencer");
+     * _mafColumnHeaders.push("Tumor_Sample_UUID");
+     * _mafColumnHeaders.push("Matched_Norm_Sample_UUID");
+     */
+
+
+
     // List of MAF fileds required for Fishplot
     var _complusoryMafFields = [];
     _complusoryMafFields.push("Hugo_Symbol");
@@ -128,7 +169,7 @@ angular.module('dataUtil').factory('mafParser', function(generalParser){
     //_complusoryMafFields.push("Mutation_Status");
     //_complusoryMafFields.push("Sequence_Source");
     //_complusoryMafFields.push("Validation_Method");
-    //_complusoryMafFields.push("Score");
+    _complusoryMafFields.push("Score");
     //_complusoryMafFields.push("BAM_File");
     //_complusoryMafFields.push("Tumor_Sample_UUID");
     //_complusoryMafFields.push("Matched_Norm_Sample_UUID");
@@ -161,6 +202,16 @@ angular.module('dataUtil').factory('clinicalParser', function(generalParser){
     return clinicalParser
 });
 
+angular.module('dataUtil').factory('mergeMafClinical', function(){
+
+
+    var mergeMafClinical = function(){};
+    return mergeMafClinical
+
+
+
+
+})
 
 
 

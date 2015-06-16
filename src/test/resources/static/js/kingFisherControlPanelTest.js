@@ -70,9 +70,7 @@ describe("kingFisherCtrl", function() {
             }
         };
 
-
         $controller = _$controller_;
-
 
         // create new scope
         $scope = _$rootScope_.$new();
@@ -141,5 +139,5 @@ describe("kingFisherCtrl", function() {
 
 
 
-})
+});
 

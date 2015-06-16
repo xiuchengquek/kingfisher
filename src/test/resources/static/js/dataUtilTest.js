@@ -90,11 +90,11 @@ describe("dataUtilitiesTest", function () {
             mockUserInput.push("Hugo_Symbol\tEntrez_Gene_Id\t" +
                 "NCBI_Build\tChromosome\tStart_Position\t" +
                 "End_Position\tStrand\tReference_Allele\t" +
-                "Tumor_Seq_Allele1\tTumor_Sample_Barcode");
+                "Tumor_Seq_Allele1\tTumor_Sample_Barcode\tScore");
 
             mockUserInput.push("TP53\t7157\t" +
                 "GRCh38.p2\tchr17\t7668402\t" +
-                "7668402\t+\tA\tT\tSampleA");
+                "7668402\t+\tA\tT\tSampleA\t0.1");
 
             expectedDataValues = {
                 Hugo_Symbol: "TP53",
@@ -106,7 +106,8 @@ describe("dataUtilitiesTest", function () {
                 Strand: "+",
                 Reference_Allele: "A",
                 Tumor_Seq_Allele1: "T",
-                Tumor_Sample_Barcode: "SampleA"};
+                Tumor_Sample_Barcode: "SampleA",
+                Score : "0.1"};
 
         }));
 
@@ -145,6 +146,75 @@ describe("dataUtilitiesTest", function () {
             expect(clinicalParserObj.dataValues).toEqual(expectedDataValues)
 
         })
+    });
+
+
+    describe("Testing mergeMafClincial", function(){
+        var mergeMafClincial;
+        var mockMaf;
+        var mockClinical;
+        var expectedResults;
+
+        beforeEach(inject(function(_mergeMafClinical_){
+            mergeMafClincial = _mergeMafClinical_;
+
+            mockMaf = [];
+            mockMaf.push("Hugo_Symbol\tEntrez_Gene_Id\t" +
+                "NCBI_Build\tChromosome\tStart_Position\t" +
+                "End_Position\tStrand\tReference_Allele\t" +
+                "Tumor_Seq_Allele1\tTumor_Sample_Barcode\tScore");
+
+            mockMaf = [];
+
+            var mutationA_1 = ["TP53", "7157", "GRCh38.p2", "chr17",
+                "100", "101", "+", "A", "T", "SampleA-1", "0.1"];
+
+            var mutationA_2 = angular.copy(mutationA_1);
+            mutationA_2[9] = "SampleA-2";
+            mutationA_2[10] = "0.2";
+
+            var mutationB_1 = ["AKT1", "7121", "GRCh38.p2", "chr11",
+                "700", "701", "+", "A", "T", "SampleA-1", "0.4" ];
+
+            var mutationB_2 = angular.copy(mutationB_1);
+            mutationB_2[9] = "SampleA-2";
+            mutationB_2[10] = "0.6";
+
+            mutationA_1 = mutationA_1.join('\t');
+            mutationA_2 = mutationA_2.join('\t');
+            mutationB_1 = mutationB_1.join('\t');
+            mutationB_2 = mutationB_2.join('\t');
+
+            mockMaf.push(mutationA_1);
+            mockMaf.push(mutationA_2);
+            mockMaf.push(mutationB_1);
+            mockMaf.push(mutationB_2);
+
+            //Create mockClincal data now
+
+            mockClinical = [];
+            mockClinical.push("Tumor_Sample_Barcode\tBiopsy_Time\tTreatment");
+            mockClinical.push("SampleA-1\t1\tTreatmentA");
+            mockClinical.push("SampleA-2\t2\tTreatmentA");
+
+            expectedResults = { timePoint : ["TreatmentA", "TreatmentB"],
+                                vafMap : { "TP53.chr17:100-101:A>T" : [0.1,0.2],
+                                           "AKT1.chr11:700:701:A>T" : [0.4, 0,6] }
+                                };
+
+
+        }))
+
+        it("Testing mergeMafClinical", function(){
+
+
+        })
+
+
+
+
     })
+
+
 });
 
