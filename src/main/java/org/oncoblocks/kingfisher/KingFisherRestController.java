@@ -9,19 +9,13 @@ import com.google.gson.JsonParseException;
 import org.oncoblocks.kingfisher.Adaptors.hclustAdaptor;
 
 
+import org.oncoblocks.kingfisher.Model.KingFisherModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.google.gson.JsonParser;
-import com.google.gson.JsonArray;
 
-
-import org.apache.commons.math3.ml.clustering.Cluster;
-
-
-import javax.xml.ws.Response;
 import java.util.List;
 
 /**

@@ -15,7 +15,6 @@ angular.module('kingFisherApp')
                 }
             )
 
-            kingFisherData.parseStringToData($scope.data)
         };
 
 

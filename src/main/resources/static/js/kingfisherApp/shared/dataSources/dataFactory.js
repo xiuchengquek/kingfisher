@@ -61,9 +61,6 @@ angular.module('kingFisherApp').factory('kingFisherData', function ($http, $log,
         return _vafData.timePoint;
     };
 
-
-
-
     sharedDataService.setVaf = function (vafScore) {
         _vafData.vafScore = vafScore
 
@@ -94,4 +91,7 @@ angular.module('kingFisherApp').factory('kingFisherData', function ($http, $log,
 
     return sharedDataService
 });
+
+
+
 

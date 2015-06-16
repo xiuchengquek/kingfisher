@@ -134,7 +134,14 @@
                     <!-- Set SrcDir and TestSrc Dir to allow Jasmine to watch for changes and autoreload-->
                     <jsSrcDir>${basedir}/src/main/resources/static/js/kingfisherApp/</jsSrcDir>
 
-                    <jsTestSrcDir>${basedir}/src/test/resources/</jsTestSrcDir>
+                    <jsTestSrcDir>${basedir}/src/test/resources/static/js/</jsTestSrcDir>
+
+                    <specIncludes>
+                        <include>**/kingFisherControlPanelTest.js</include>
+                        <include>**/dataUtilTest.js</include>
+
+
+                    </specIncludes>
 
                     <!-- Required JS libraries for jasmine tests-->
                     <preloadSources>
@@ -147,6 +154,10 @@
                         <source>${basedir}/src/main/resources/static/js/kingfisherApp/app.js</source>
                         <source>${basedir}/src/main/resources/static/js/kingfisherApp/shared/dataSources/dataFactory.js</source>
                         <source>${basedir}/src/main/resources/static/js/kingfisherApp/components/controlPanel/controlPanelController.js</source>
+                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/components/dataUtil/dataUtil.js</source>
+
+
+
                     </preloadSources>
 
 

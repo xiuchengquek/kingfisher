@@ -13,10 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.google.gson.*;
-import org.oncoblocks.kingfisher.KingFisherApplication;
-import org.oncoblocks.kingfisher.KingFisherModel;
-import org.oncoblocks.kingfisher.KingFisherRepository;
-import org.oncoblocks.kingfisher.KingFisherRestController;
+import org.oncoblocks.kingfisher.Model.KingFisherModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.web.WebAppConfiguration;
