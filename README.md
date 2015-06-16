@@ -7,6 +7,7 @@ Tumor Heterogeneity Analysis and Visualization Tool
 -02/06/2015 : Establish basic framework for testing. Provided basic documentation. Working landing page.
 -15/06/2015 : Added Hiercherical Clustering Service at the server backend. Added Service to store data at the from end
 `dataFactory`.
+-16/06/2015 : Added Parser for Maf and Clinical Data
 
 
 ## Introduction
