@@ -139,7 +139,9 @@
                     <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
                         <div class="panel-body">
 
-                            <summary-plots timePoint="timePoint" vafScore="vafScore" box-plot h-clust line-plot></summary-plots>
+                            <summary-plots timePoint="timePoint" vafScore="vafScore" box-plot h-clust line-plot>
+
+                                {{data.vafMap}} </summary-plots>
 
                         </div>
                     </div>
@@ -212,7 +214,7 @@
 ================================================== -->
 
 <script type="text/javascript" src="/js/kingfisherApp/app.js"></script>
-<script type="text/javascript" src="/js/kingfisherApp/shared/dataSources/dataFactory.js"></script>
+<script type="text/javascript" src="/js/kingfisherApp/components/dataUtil/dataUtil.js"></script>
 
 <script type="text/javascript" src="js/kingfisherApp/components/controlPanel/controlPanelController.js"></script>
 <script type="text/javascript" src="js/kingfisherApp/components/summaryStat/summaryStatController.js"></script>

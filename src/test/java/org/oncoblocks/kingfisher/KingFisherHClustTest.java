@@ -161,7 +161,5 @@ public class KingFisherHClustTest {
 
         content = results.getResponse().getContentAsString();
         assertThat(content, containsString("Cluster Failed. Please Check Data"));
-
-
     }
 }

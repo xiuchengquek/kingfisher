@@ -10,12 +10,13 @@
 describe("kingFisherCtrl", function() {
 
     var $controller;
-    var $rootScope;
+    var $httpBackend;
     var $q;
     var $scope;
     var $compile;
     var template;
     var mock;
+
 
     beforeEach(module("kingFisherApp"));
 
@@ -42,7 +43,9 @@ describe("kingFisherCtrl", function() {
      * Inject Controllers and Mocks data.
      *
      */
-    beforeEach(inject(function(_$rootScope_,_$controller_, _$q_, _$compile_, $templateCache){
+    beforeEach(inject(function(_$rootScope_,_$controller_, _$q_, _$compile_, $templateCache, _$httpBackend_){
+
+
 
 
         mock = ["Gene\tPretreatment\tC4D1\tC7D1",
@@ -54,6 +57,10 @@ describe("kingFisherCtrl", function() {
             "SETBP1_p.D868N\t0.1\t0.24\t0.32"];
 
         mock = mock.join("\n");
+
+
+        $httpBackend = _$httpBackend_;
+        $httpBackend.when('GET', 'js/kingfisherApp/components/controlPanel/example.tsv').respond(mock);
 
         $q = _$q_;
 
@@ -76,6 +83,8 @@ describe("kingFisherCtrl", function() {
         $scope = _$rootScope_.$new();
         // compile
         $compile = _$compile_;
+
+
 
         // load controller with the correct $scope and function
         $controller = $controller('kingFisherCtrl', {$scope: $scope, kingFisherData: mockKingFisherData});
@@ -124,6 +133,8 @@ describe("kingFisherCtrl", function() {
             //console.log(test)
 
             items.click();
+            $httpBackend.flush();
+
             $scope.$digest();
 
             expect($scope.data.maf).toBe(mock);

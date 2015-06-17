@@ -4,8 +4,12 @@
 
 
 angular.module("kingFisherApp")
-    .controller("summaryStat", function(){
+    .controller("summaryStat", function($scope, dataLoader){
+        $scope.data = {vafMap : {}};
 
-        console.log('lol')
+        $scope.data['vafMap'] = dataLoader.getVafMap()
+        $scope.$watch(dataLoader.getVafMap, function(newVal,oldVal){
+            console.log('changed')
 
+        })
     });

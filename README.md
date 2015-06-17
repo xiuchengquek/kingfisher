@@ -59,7 +59,6 @@ KingFisher uses JUnit and Jasmine for testing.
 Pop your war file into your tomcat `webapp` directory
 
 For more information about deploying applications. Please refer to [tomcat documentation](https://tomcat.apache.org/tomcat-7.0-doc/appdev/deployment.html) or have a look at cbioportal's [wiki page](https://github.com/cBioPortal/cbioportal/wiki)
- 
 
 ## Route map
 
@@ -72,13 +71,6 @@ POST| /rest | 200 |  xhr | Post data |
 GET | /js/* | 200 | *.js | javascript libraries |
 GET | /hclust| 200 | Do hiercherical clustering |newick format representing hiercherical clustering results
 
-
-
-
-
-
-
-e
 
 
 

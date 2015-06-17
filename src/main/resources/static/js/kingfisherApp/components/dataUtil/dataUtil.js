@@ -2,12 +2,16 @@
  * Created by xiuchengquek on 16/06/15.
  */
 
+/**
+ * TODO : To do make fields into an object that takes in an agrument that specific the type of value.
+ */
 
 
-angular.module('dataUtil', []);
+//angular.module('kingFisherApp', []);
 
 
-angular.module('dataUtil').factory('generalParser', function(){
+angular.module('kingFisherApp')
+    .factory('generalParser', function(){
 
     /**
      * General Parser that takes in the a list of required header
@@ -38,8 +42,10 @@ angular.module('dataUtil').factory('generalParser', function(){
         var indexOrder = {};
         var missingFields = [];
 
-        angular.forEach(this.requiredHeader, function(value){
+        angular.forEach(self.requiredHeader, function(value){
+
             var indexNo = userHeader.indexOf(value.toLowerCase());
+
             if (indexNo == -1){
                 missingFields.push(value);
             }
@@ -74,7 +80,7 @@ angular.module('dataUtil').factory('generalParser', function(){
             var lineValues= line.split('\t');
 
             // if the number of fields in line is less or more than the header, report as malformed line
-            if (lineValues.length != Object.keys(self.indexOrder).length) {
+            if (lineValues.length != self.userHeaderFields.length) {
                 self.malformedLines.push(lineNo + 1);
             } else {
                 self.dataValues.push(mapOnIndex(lineValues, self.indexOrder));
@@ -86,6 +92,16 @@ angular.module('dataUtil').factory('generalParser', function(){
      * Main method to call for converting userInput into an object.
      * @param userString
      */
+
+    generalParser.prototype.isOk = function(){
+        var self = this;
+
+        return ( self.malformedLines.length == 0 && self.missingFields.length == 0)
+
+
+
+    }
+
     generalParser.prototype.parseData = function(userString){
         var self = this;
 
@@ -99,13 +115,16 @@ angular.module('dataUtil').factory('generalParser', function(){
         }
     };
 
+
+
+
     return generalParser
 
 });
 
 
 
-angular.module('dataUtil').factory('mafParser', function(generalParser){
+angular.module('kingFisherApp').factory('mafParser', function(generalParser){
 
     /**
      *     //Column Header of MAF file format in order
@@ -185,7 +204,7 @@ angular.module('dataUtil').factory('mafParser', function(generalParser){
     return mafParser
 });
 
-angular.module('dataUtil').factory('clinicalParser', function(generalParser){
+angular.module('kingFisherApp').factory('clinicalParser', function(generalParser){
 
     var _clinicalFields = [];
     _clinicalFields.push('Tumor_Sample_Barcode');
@@ -202,17 +221,163 @@ angular.module('dataUtil').factory('clinicalParser', function(generalParser){
     return clinicalParser
 });
 
-angular.module('dataUtil').factory('mergeMafClinical', function(){
+angular.module('kingFisherApp').factory('mergeMafClinical', function(){
+
+    var groupMut;
+    var mergeMafClinical;
+    var arrangeTimePoint;
+
+    /**
+     * function to check the data type for timepoint field in clincal data and return the apporiate function
+     * to handle the different value type - date, float or character
+     *
+     * @param value time point value
+     * @returns {*}
+     */
+    function checkTimeType(value){
+
+        var isDate = function(val) {
+            return ( (new Date(val) !== "Invalid Date" && !isNaN(new Date(val)) ));
+        };
+
+        var isFloat =  function(val) {
+            return ( !isNaN(parseFloat(val)) )
+        };
+
+        if (value.every(isDate)){
+            return function(value) {
+                return new Date(value);
+            }
+        } else if (value.every(isFloat)) {
+            return  function(value){
+                return parseFloat(value)
+            }
+        } else {
+            return function(value) {
+                return value.toLowerCase()
+            }
+        }
+    }
+
+    groupMut = function (mafData) {
+        var mutation = {};
+
+        angular.forEach(mafData, function (value) {
+            var sampleCode = value.Tumor_Sample_Barcode;
+            var hugoSymbol = value.Hugo_Symbol;
+            var position = value.Start_Position;
+            var refAllele = value.Reference_Allele;
+            var tumAllele = value.Tumor_Seq_Allele1;
+            var score = value.Score;
+
+            var mutationName = hugoSymbol + ":g.[" + position + refAllele + ">" + tumAllele + "]";
+            mutation[mutationName] = mutation[mutationName] || {};
+            mutation[mutationName][sampleCode] = score;
+        });
+        return mutation
+    };
 
 
-    var mergeMafClinical = function(){};
+    arrangeTimePoint = function (clinicalData) {
+        var timeType;
+        var biopsyTimeList = clinicalData.map(function (obj) {
+            return obj.Biopsy_Time
+        });
+
+        timeType = checkTimeType(biopsyTimeList);
+        clinicalData = clinicalData.sort(function (a, b) {
+            return timeType(a.Biopsy_Time) > timeType(b.Biopsy_Time)
+        });
+
+        return clinicalData.map(function (x) { return x.Tumor_Sample_Barcode });
+    };
+
+
+    mergeMafClinical = function (clinicalData, mafData) {
+
+        var vafMap = {};
+        var timePoint = arrangeTimePoint(clinicalData);
+        var groupMutations = groupMut(mafData);
+
+        angular.forEach(groupMutations, function(value, mutName) {
+            vafMap[mutName] = vafMap[mutName] || [];
+            angular.forEach(timePoint, function(sample) {
+                var score = value[sample] || 0;
+                vafMap[mutName].push(score);
+            });
+        });
+        return {timePoint : timePoint, vafMap : vafMap}
+    };
     return mergeMafClinical
+});
+
+
+angular.module('kingFisherApp')
+    .factory('dataLoader',
+    function(mafParser, clinicalParser, mergeMafClinical){
+
+        var data = {_timePoint : {} , _vafMap : {}}
+
+        var _timePoint;
+        var _vafMap;
+
+        var sharedData = {};
+
+        sharedData.getVafMap = function(){
+            return data._vafMap;
+        };
+
+        sharedData.getTimePoint = function(){
+            return _timePoint;
+        };
+
+
+        sharedData.setVafMap = function(vafMap){
+            data._vafMap = vafMap
+        };
+
+        sharedData.setTimePoint = function(timePoint) {
+            _timePoint = timePoint
+        };
+
+        sharedData.loadAndValidate = function(maf, clinical) {
+
+            var results;
+            var mafObj = new mafParser();
+            mafObj.parseData(maf);
+
+            var clinicalObj = new clinicalParser();
+            clinicalObj.parseData(clinical);
+
+            if (clinicalObj.isOk() && mafObj.isOk()) {
+                results = mergeMafClinical(clinicalObj.dataValues, mafObj.dataValues)
+            }
+            else if (clinicalObj.isOk()) {
+                // statement to tell mafObj is not okay
+
+
+            }
+            else if (mafObj.isOk()) {
+                // statement to say clinical is wrong
+
+
+            }
+            else {
+                // statement both are wrong;
+
+            }
+            sharedData.setVafMap(results.vafMap);
+            sharedData.setTimePoint(results.timePoint);
+        }
 
 
 
 
-})
 
+
+        return sharedData
+
+});
 
 
 

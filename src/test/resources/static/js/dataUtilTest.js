@@ -13,7 +13,7 @@ describe("dataUtilitiesTest", function () {
     var expectedDataValues;
 
 
-    beforeEach(module("dataUtil"));
+    beforeEach(module("kingFisherApp"));
 
     describe("Testing General Parser", function () {
         var generalParser;
@@ -53,6 +53,23 @@ describe("dataUtilitiesTest", function () {
 
         });
 
+        it("Ignore Extraheader", function () {
+            var generalParserObj = new generalParser("general", requiredHeader);
+            mockUserInput = ["header1\theader2\theader3\theader4",
+                "value1\tvalue2\tvalue3\tvalue4",
+                "valueA\tvalueB\tvalueC\tvalueD"];
+
+
+            mockUserInput = mockUserInput.join("\n");
+            generalParserObj.parseData(mockUserInput);
+
+            expect(generalParserObj.isOk()).toBe(true)
+            console.log(generalParserObj)
+
+            expect(generalParserObj.dataValues).toEqual(expectedDataValues);
+
+        });
+
 
         it("Testing General parser With Missing Data in Line2", function () {
             var generalParserObj = new generalParser("general", requiredHeader);
@@ -69,7 +86,6 @@ describe("dataUtilitiesTest", function () {
 
         it("Testing General Parser with Missing Header", function () {
             var generalParserObj = new generalParser("general", requiredHeader);
-
             mockUserInput[0] = "header1\theader2";
             mockUserInput = mockUserInput.join("\n");
 
@@ -134,7 +150,8 @@ describe("dataUtilitiesTest", function () {
             mockUserInput.push("SampleA\t1\tTreatmentA");
             expectedDataValues = [{
                 Tumor_Sample_Barcode: "SampleA",
-                Biopsy_Time: "1", Treatment: "TreatmentA"}];
+                Biopsy_Time: "1",
+                Treatment: "TreatmentA"}];
 
         }));
 
@@ -151,12 +168,18 @@ describe("dataUtilitiesTest", function () {
 
     describe("Testing mergeMafClincial", function(){
         var mergeMafClincial;
+        var clinicalParser;
+        var mafParser;
         var mockMaf;
         var mockClinical;
         var expectedResults;
+        var arrangeTimePoint;
 
-        beforeEach(inject(function(_mergeMafClinical_){
+        beforeEach(inject(function(_mergeMafClinical_, _clinicalParser_, _mafParser_, _dataLoader_){
             mergeMafClincial = _mergeMafClinical_;
+            clinicalParser = _clinicalParser_;
+            mafParser = _mafParser_;
+
 
             mockMaf = [];
             mockMaf.push("Hugo_Symbol\tEntrez_Gene_Id\t" +
@@ -164,7 +187,6 @@ describe("dataUtilitiesTest", function () {
                 "End_Position\tStrand\tReference_Allele\t" +
                 "Tumor_Seq_Allele1\tTumor_Sample_Barcode\tScore");
 
-            mockMaf = [];
 
             var mutationA_1 = ["TP53", "7157", "GRCh38.p2", "chr17",
                 "100", "101", "+", "A", "T", "SampleA-1", "0.1"];
@@ -197,18 +219,54 @@ describe("dataUtilitiesTest", function () {
             mockClinical.push("SampleA-1\t1\tTreatmentA");
             mockClinical.push("SampleA-2\t2\tTreatmentA");
 
-            expectedResults = { timePoint : ["TreatmentA", "TreatmentB"],
-                                vafMap : { "TP53.chr17:100-101:A>T" : [0.1,0.2],
-                                           "AKT1.chr11:700:701:A>T" : [0.4, 0,6] }
+            expectedResults = { timePoint : ["SampleA-1", "SampleA-2"],
+                                vafMap : { "TP53:g.[100A>T]" : ["0.1","0.2"],
+                                           "AKT1:g.[700A>T]" : ["0.4", "0.6"] }
                                 };
 
 
-        }))
+        }));
+
+
 
         it("Testing mergeMafClinical", function(){
 
+            var mafParserObj = new mafParser();
+            mockMaf = mockMaf.join('\n');
+
+            var clinicaParserObj = new clinicalParser();
+            mockClinical = mockClinical.join('\n');
+
+            mafParserObj.parseData(mockMaf);
+            clinicaParserObj.parseData(mockClinical);
+
+            var results = mergeMafClincial(clinicaParserObj.dataValues, mafParserObj.dataValues)
+
+            expect(results).toEqual(expectedResults);
+
 
         })
+
+        it("Making Sure That it is always arranged", function(){
+            var mafParserObj = new mafParser();
+            mockMaf = mockMaf.join('\n');
+
+            var clinicaParserObj = new clinicalParser();
+            mockClinical = [];
+            mockClinical.push("Tumor_Sample_Barcode\tBiopsy_Time\tTreatment");
+            mockClinical.push("SampleA-2\t2\tTreatmentA");
+            mockClinical.push("SampleA-1\t1\tTreatmentA");
+
+            mockClinical = mockClinical.join('\n');
+
+            mafParserObj.parseData(mockMaf);
+            clinicaParserObj.parseData(mockClinical);
+
+            var results = mergeMafClincial(clinicaParserObj.dataValues, mafParserObj.dataValues)
+            expect(results).toEqual(expectedResults);
+        })
+
+
 
 
 
