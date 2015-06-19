@@ -10,7 +10,6 @@ angular.module('kingFisherApp')
             },
             link: function (scope, elem, attr) {
 
-
                 d3.box = function () {
                     var width = 1,
                         height = 1,

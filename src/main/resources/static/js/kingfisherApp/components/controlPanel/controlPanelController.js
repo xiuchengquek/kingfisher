@@ -16,6 +16,10 @@ angular.module('kingFisherApp')
 
                 var results = { newick : results.data, vafMap :dataLoader.getVafMap(), timePoint : dataLoader.getTimePoint()  }
                 $scope.results = results;
+                $('#headingTwoLink').trigger('click')
+
+
+
 
             });
         };

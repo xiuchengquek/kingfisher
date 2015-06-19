@@ -8,6 +8,7 @@ Tumor Heterogeneity Analysis and Visualization Tool
 -15/06/2015 : Added Hiercherical Clustering Service at the server backend. Added Service to store data at the from end
 `dataFactory`.
 -16/06/2015 : Added Parser for Maf and Clinical Data
+-19/06/2015 : Boxplot, line plot and phylogenetic tree. Example dataset.
 
 
 ## Introduction
