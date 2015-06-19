@@ -9,7 +9,8 @@ angular.module("kingFisherApp")
 
         $scope.data['vafMap'] = dataLoader.getVafMap()
         $scope.$watch(dataLoader.getVafMap, function(newVal,oldVal){
-            console.log('changed')
+            $scope.data.vafMap = newVal
+
 
         })
     });

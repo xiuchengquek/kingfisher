@@ -8,6 +8,7 @@ import org.oncoblocks.kingfisher.Adaptors.hclustAdaptor;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -132,7 +133,7 @@ public class KingFisherHClustTest {
 
     @Test
     public void testControllerDoHClust() throws Exception{
-        MvcResult results = mockMvc.perform(get("/hclust")
+        MvcResult results = mockMvc.perform(post("/hclust")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mockJson))
                 .andExpect(status().isOk())
@@ -144,7 +145,7 @@ public class KingFisherHClustTest {
 
     @Test
     public void testControllerDoHCLustFail() throws Exception{
-        MvcResult results = mockMvc.perform(get("/hclust")
+        MvcResult results = mockMvc.perform(post("/hclust")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("FAIL"))
                 .andExpect(status().isNotAcceptable())
@@ -153,7 +154,7 @@ public class KingFisherHClustTest {
         String content = results.getResponse().getContentAsString();
         assertThat(content, containsString("Malformed Data Structure. Please Check Data"));
 
-        results = mockMvc.perform(get("/hclust")
+        results = mockMvc.perform(post("/hclust")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{ timePoint :[\"a\"], vafMap : {a : [0.1,0.2,0.33]}}"))
                 .andExpect(status().isNotAcceptable())

@@ -11,7 +11,9 @@ import org.oncoblocks.kingfisher.Adaptors.hclustAdaptor;
 
 import org.oncoblocks.kingfisher.Model.KingFisherModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,13 +70,16 @@ public class KingFisherRestController {
      * @return response Http response String saying if HClust fail or
      * @throws Exception
      */
-    @RequestMapping(value="/hclust", method=RequestMethod.GET)
+    @RequestMapping(value="/hclust", method=RequestMethod.POST)
     ResponseEntity<String> doHClust(@RequestBody String data) throws Exception {
 
         Gson gson = new Gson();
         ResponseEntity response;
 
         HttpStatus returnCode = HttpStatus.NOT_ACCEPTABLE;
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", MediaType.TEXT_PLAIN_VALUE);
+
 
         String hclustResults =  "Started but did not succeed";
 
@@ -93,9 +98,12 @@ public class KingFisherRestController {
         }
 
         finally {
-            response = new ResponseEntity<>(hclustResults, returnCode);
+            response = new ResponseEntity<String>(hclustResults, responseHeaders,returnCode);
 
         }
+
+
+
         return response;
     }
 

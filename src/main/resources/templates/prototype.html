@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<head>
 <!-- Basic Page Needs
 ================================================== -->
 <meta charset="utf-8">
@@ -21,13 +21,23 @@
 <link rel="apple-touch-icon" sizes="72x72" href="img/apple-touch-icon-72x72.png">
 <link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-114x114.png">
 
+
+
 <!-- Bootstrap -->
-<link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="/fonts/font-awesome/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="/fonts/font-awesome/css/font-awesome.css"/>
+
+<script src="/js/kingfisherApp/js/d3.min.js" charset="utf-8"></script>
+
+    <script src="/js/kingfisherApp/js/newick.js"></script>
+
 
 <!-- AngularJs -->
 <script src="/js/kingfisherApp/js/angular.min.js"></script>
 <script src="/js/kingfisherApp/js/angular-resource.min.js"></script>
+
+
+
 
 <!-- Stylesheet
 ================================================== -->
@@ -51,7 +61,7 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body ng-app="kingFisherApp">
 <!-- Navigation
 ==========================================-->
 <nav id="tf-menu" class="navbar navbar-default navbar-fixed-top on">
@@ -86,12 +96,12 @@
 <!-- Home Page ----->
 
 
-<div id="tf-about">
-    <div class="container" ng-app="kingFisherApp">
+<div id="tf-about" ng-controller="kingFisherCtrl">
+    <div class="container" >
         <div class="row">
             <div class="col-md-12 col-sm-4">
                <div class="panel-group" id="mainAccordion" role="tablist" aria-multiselectable="true">
-                    <div class="panel panel-default" ng-controller="kingFisherCtrl">
+                    <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#mainAccordion" href="#collapseOne"
@@ -110,13 +120,8 @@
                                     This is the control panel for kingfisher. Data format will finailize upon completion .
                                     Please click on example data for a awalk thru <br/>
 
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad
-                                    squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa
-                                    nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid
-                                    single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft
-                                    beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice
-                                    lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you
-                                    probably haven't heard of them accusamus labore sustainable VHS.
+
+
                                 </div>
 
                                 <div class="col-md-6">
@@ -127,7 +132,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel panel-default" ng-controller="summaryStat">
+                <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingTwo">
                         <h4 class="panel-title">
                             <a class="collapsed" data-toggle="collapse" data-parent="#mainAccordion" href="#collapseTwo"
@@ -138,10 +143,15 @@
                     </div>
                     <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
                         <div class="panel-body">
+                            <div><lineplot data="results"></lineplot></div>
 
-                            <summary-plots timePoint="timePoint" vafScore="vafScore" box-plot h-clust line-plot>
+                            <div id="phylogram"></div>
 
-                                {{data.vafMap}} </summary-plots>
+
+
+                            <phylogenetic data="results.newick"></phylogenetic>
+                            <boxplot  data="results"></boxplot>
+
 
                         </div>
                     </div>
@@ -158,13 +168,13 @@
                     <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
                          aria-labelledby="headingThree">
                         <div class="panel-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad
-                            squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa
-                            nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid
-                            single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft
-                            beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice
-                            lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you
-                            probably haven't heard of them accusamus labore sustainable VHS.
+                            <div class="col-md-6">
+
+                                This is the control panel for kingfisher. Data format will finailize upon completion .
+                                Please click on example data for a awalk thru <br/>
+                            {{ clusters.data }}
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -176,8 +186,9 @@
 
 
     </div>
+
 </div>
-</div>
+
 
 <!-- About Us Page
 ==========================================-->
@@ -217,6 +228,9 @@
 <script type="text/javascript" src="/js/kingfisherApp/components/dataUtil/dataUtil.js"></script>
 
 <script type="text/javascript" src="js/kingfisherApp/components/controlPanel/controlPanelController.js"></script>
+<script type="text/javascript" src="js/kingfisherApp/components/controlPanel/lineplotDirective.js"></script>
+<script type="text/javascript" src="js/kingfisherApp/components/controlPanel/phyloDirective.js"></script>
+<script type="text/javascript" src="js/kingfisherApp/components/controlPanel/boxplotDirective.js"></script>
 <script type="text/javascript" src="js/kingfisherApp/components/summaryStat/summaryStatController.js"></script>
 
 

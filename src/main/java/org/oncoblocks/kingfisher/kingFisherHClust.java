@@ -84,7 +84,7 @@ public class KingFisherHClust {
         hClust.setNumClusters(1);
         // Use Euclidean Distance
         hClust.setDistanceFunction(new EuclideanDistance());
-        hClust.setDistanceIsBranchLength(true);
+        hClust.setDistanceIsBranchLength(false);
 
         // Build Clusterer
         hClust.buildClusterer(data);

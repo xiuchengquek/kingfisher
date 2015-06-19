@@ -22,7 +22,6 @@ angular.module('kingFisherApp')
 
     generalParser = function (dataType, requiredHeader) {
         var self = this;
-
         self.dataType = dataType;
         self.requiredHeader = requiredHeader;
         self.userHeaderFields = [];
@@ -58,12 +57,15 @@ angular.module('kingFisherApp')
         self.indexOrder = indexOrder;
      };
 
-    /**
+
+        /**
      * Map Data to the correct header as a json object which is stored in attribute : dataValues
      * @param data list of lines from user Input
      */
     generalParser.prototype._mapDataToHeader = function(data) {
         var self = this;
+        var dataValues =[];
+        var malformedLines = [];
 
         // private method for mapping data to header
         var mapOnIndex = function (lineValues, indexOrder) {
@@ -79,13 +81,19 @@ angular.module('kingFisherApp')
             // check that length of line equivalent to index
             var lineValues= line.split('\t');
 
+
             // if the number of fields in line is less or more than the header, report as malformed line
             if (lineValues.length != self.userHeaderFields.length) {
-                self.malformedLines.push(lineNo + 1);
+                malformedLines.push(lineNo + 1);
             } else {
-                self.dataValues.push(mapOnIndex(lineValues, self.indexOrder));
+                dataValues.push(mapOnIndex(lineValues, self.indexOrder));
             }
-        });
+
+        }) ;
+
+        self.dataValues = dataValues ;
+        self.malformedLines = malformedLines;
+
     };
 
     /**
@@ -97,10 +105,7 @@ angular.module('kingFisherApp')
         var self = this;
 
         return ( self.malformedLines.length == 0 && self.missingFields.length == 0)
-
-
-
-    }
+    };
 
     generalParser.prototype.parseData = function(userString){
         var self = this;
@@ -193,12 +198,15 @@ angular.module('kingFisherApp').factory('mafParser', function(generalParser){
     //_complusoryMafFields.push("Tumor_Sample_UUID");
     //_complusoryMafFields.push("Matched_Norm_Sample_UUID");
 
-    var mafParser = function(){
-        this.dataType = "naf";
-        this.requiredHeader = _complusoryMafFields;
-    };
 
-    mafParser.prototype = new generalParser;
+
+    mafParser.prototype = new generalParser();
+    mafParser.prototype.constructor= mafParser;
+
+    function mafParser(){
+        this.dataType = "Maf";
+        this.requiredHeader = _complusoryMafFields
+    }
 
 
     return mafParser
@@ -212,11 +220,14 @@ angular.module('kingFisherApp').factory('clinicalParser', function(generalParser
     _clinicalFields.push('Treatment');
 
 
-    var clinicalParser = function(){
-        this.dataType = "clinical";
-        this.requiredHeader = _clinicalFields;
-    };
-    clinicalParser.prototype = new generalParser;
+    clinicalParser.prototype = new generalParser();
+    clinicalParser.prototype.constructor= clinicalParser;
+    function clinicalParser(){
+        this.dataType = "Clinical";
+        this.requiredHeader = _clinicalFields
+    }
+
+
 
     return clinicalParser
 });
@@ -292,9 +303,7 @@ angular.module('kingFisherApp').factory('mergeMafClinical', function(){
         return clinicalData.map(function (x) { return x.Tumor_Sample_Barcode });
     };
 
-
     mergeMafClinical = function (clinicalData, mafData) {
-
         var vafMap = {};
         var timePoint = arrangeTimePoint(clinicalData);
         var groupMutations = groupMut(mafData);
@@ -314,35 +323,64 @@ angular.module('kingFisherApp').factory('mergeMafClinical', function(){
 
 angular.module('kingFisherApp')
     .factory('dataLoader',
-    function(mafParser, clinicalParser, mergeMafClinical){
+    function(mafParser, clinicalParser, mergeMafClinical, $q, $http){
 
-        var data = {_timePoint : {} , _vafMap : {}}
 
         var _timePoint;
         var _vafMap;
+        var _cluster = {};
+
+
+
+
+
+
 
         var sharedData = {};
 
+        sharedData.doCall = function() {
+
+            var req = {
+                method : "POST",
+                url : "/hclust",
+                data : {vafMap : _vafMap, timePoint : _timePoint },
+                header: {'Content-Type' : 'application/json'}
+            };
+
+            return $http(req)
+
+        }
+
         sharedData.getVafMap = function(){
-            return data._vafMap;
+            return _vafMap;
         };
 
         sharedData.getTimePoint = function(){
             return _timePoint;
         };
 
+        sharedData.getCluster = function(){
+            return _cluster;
+        };
+
+        sharedData.setCluster = function(cluster){
+            _cluster = cluster;
+        };
+
 
         sharedData.setVafMap = function(vafMap){
-            data._vafMap = vafMap
+            _vafMap = vafMap
         };
 
         sharedData.setTimePoint = function(timePoint) {
             _timePoint = timePoint
         };
 
+
+
         sharedData.loadAndValidate = function(maf, clinical) {
 
-            var results;
+            var results = {};
             var mafObj = new mafParser();
             mafObj.parseData(maf);
 
@@ -368,17 +406,79 @@ angular.module('kingFisherApp')
             }
             sharedData.setVafMap(results.vafMap);
             sharedData.setTimePoint(results.timePoint);
-        }
 
 
 
 
-
+        };
 
         return sharedData
 
 });
 
+
+
+angular.module('kingFisherApp')
+    .factory('d3Helper', function(){
+
+        var _data;
+        var _vafMax;
+
+        // Only one instance of d3Helper need to exist
+        var d3Helper = {};
+        var autoWidth = {};
+
+        function findVafMax(data){
+            return d3.max(data.map(function(d) { return d3.max(d)}))
+        }
+
+        // AutoWdith for each plot, multiple instances, so create prototype
+        autoWidth = function (elem, height, margin, minWidth){
+            var self = this;
+            self.elem = elem[0];
+            self.margin = margin;
+            self.heigth = height - self.margin.left - self.margin.right || height - self.margin || height;
+            self.minWidth = minWidth
+            return this;
+        };
+
+        autoWidth.prototype.reWidth = function() {
+            var self = this;
+            var width = self.elem.offsetWidth;
+
+            if (width > self.minWidth) {
+                self.width = width - self.margin.left - self.margin.right || width - self.margin || width;
+            }
+            else {
+                self.width = self.minWidth
+            }
+        };
+
+        autoWidth.prototype.getWidth = function(){
+            return this.width
+        };
+
+
+        autoWidth.prototype.getHeight = function(){
+            return this.height
+
+        };
+
+        d3Helper.setData = function(data){
+            _vafMax = findVafMax(data.vafMap);
+            _data = data;
+        };
+
+
+        d3Helper.getvafMax = function(){
+            return _vafMax;
+        };
+
+        return {
+            autoWidth  : autoWidth,
+            d3Helper   : d3Helper
+        }
+    });
 
 
 
