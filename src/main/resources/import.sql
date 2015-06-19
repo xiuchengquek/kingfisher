@@ -1,0 +1,1 @@
+INSERT INTO king_fisher_model (title, maf, cnv, clinical) values ('test', 'maf1' , 'cnv1', 'clinical')

@@ -1,7 +1,7 @@
 /**
  * Created by xiuchengquek on 26/05/15.
  */
-package org.oncoblocks.kingfisher;
+package org.oncoblocks.kingfisher.Model;
 
 import java.io.Serializable;
 
@@ -28,7 +28,6 @@ public class KingFisherModel implements Serializable{
 
     protected KingFisherModel(){};
 
-
     /**
      * constructor for populating entries
      * data, cnv, clincal are json string
@@ -38,6 +37,8 @@ public class KingFisherModel implements Serializable{
      * @param cnv Json String Contain CNV data
      * @param clinical Json String contain clinical data
      */
+
+
     public KingFisherModel(String title, String data, String cnv, String clinical) {
         this.title = title;
         this.maf = data;

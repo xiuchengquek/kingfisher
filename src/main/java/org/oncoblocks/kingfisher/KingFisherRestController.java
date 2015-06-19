@@ -4,14 +4,18 @@
 
 package org.oncoblocks.kingfisher;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import org.oncoblocks.kingfisher.Adaptors.hclustAdaptor;
+
+
+import org.oncoblocks.kingfisher.Model.KingFisherModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -21,7 +25,6 @@ import java.util.List;
  *  KingFisherRepository and based on KingFisherModel in KingFisherModel
  */
 @RestController
-@RequestMapping("/rest")
 public class KingFisherRestController {
 
     /** Autowire configuration based on interface declare in KingFisherRepository
@@ -33,15 +36,15 @@ public class KingFisherRestController {
     /**
      * Method to andle GET request, return all items in the database
      * @return All KingFisherModel Objects in the database **/
-    @RequestMapping(method= RequestMethod.GET)
+    @RequestMapping(value="/rest" , method= RequestMethod.GET)
     public Iterable<KingFisherModel> getAll() {
         return repo.findAll();
     }
 
     /** Handle GET request, return all items with matching title in the database
      * @return List of KingFisherModel Objects with matching title **/
-    @RequestMapping(params={"title"}, method = RequestMethod.GET)
-    List<KingFisherModel> findByTitle(@Param("title") String title) {
+    @RequestMapping(value="/rest" , params={"title"}, method = RequestMethod.GET)
+    List<KingFisherModel> findByTitle(@RequestParam("title") String title) {
         return repo.findByTitle(title);
     }
 
@@ -50,13 +53,58 @@ public class KingFisherRestController {
      * Returns the same item that was posted.
      * @return Response with Kingfisher model and HTTP status == 200
      */
-    @RequestMapping(method=RequestMethod.POST)
+    @RequestMapping(value="/rest", method=RequestMethod.POST)
     ResponseEntity<KingFisherModel> create(@RequestBody KingFisherModel kingFisherModel) {
         if (kingFisherModel != null) {
             repo.save(kingFisherModel);
         }
-        return new ResponseEntity(kingFisherModel, HttpStatus.OK);
+        return new ResponseEntity<>(kingFisherModel, HttpStatus.OK);
 
+    }
+
+    /**
+     *
+     * @param data json content. Json object containing 2 key.  timePoint and vafMAP.
+     *             Timepoint contains an list of names for each timepoint
+     *             vafMap is an object containing mutation names as key and values are list containing double values
+     * @return response Http response String saying if HClust fail or
+     * @throws Exception
+     */
+    @RequestMapping(value="/hclust", method=RequestMethod.POST)
+    ResponseEntity<String> doHClust(@RequestBody String data) throws Exception {
+
+        Gson gson = new Gson();
+        ResponseEntity response;
+
+        HttpStatus returnCode = HttpStatus.NOT_ACCEPTABLE;
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", MediaType.TEXT_PLAIN_VALUE);
+
+
+        String hclustResults =  "Started but did not succeed";
+
+        // Try and see if it works. else return error message and httpstatus. Not sure of what exception weka might throw
+        try {
+            hclustAdaptor hclust = gson.fromJson(data, hclustAdaptor.class);
+            hclustResults =  KingFisherHClust.doClust(hclust.getVafMap(), hclust.getTimePoint());
+            returnCode = HttpStatus.OK;
+        }
+        catch(JsonParseException e){
+            hclustResults = "Malformed Data Structure. Please Check Data";
+        }
+
+        catch(Exception e){
+            hclustResults = "Cluster Failed. Please Check Data";
+        }
+
+        finally {
+            response = new ResponseEntity<String>(hclustResults, responseHeaders,returnCode);
+
+        }
+
+
+
+        return response;
     }
 
 }

@@ -5,6 +5,7 @@
 package org.oncoblocks.kingfisher;
 
 //import org.springframework.data.mongodb.repository.MongoRepository;
+import org.oncoblocks.kingfisher.Model.KingFisherModel;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

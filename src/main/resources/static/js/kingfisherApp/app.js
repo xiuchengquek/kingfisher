@@ -3,9 +3,6 @@
  */
 
 
+angular.module("kingFisherApp", ['ngResource']);
 
-
-
-
-angular.module('kingFisherApp', ['ngResource']);
 

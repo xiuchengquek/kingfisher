@@ -5,6 +5,10 @@ Tumor Heterogeneity Analysis and Visualization Tool
 ## Updates
 
 -02/06/2015 : Establish basic framework for testing. Provided basic documentation. Working landing page.
+-15/06/2015 : Added Hiercherical Clustering Service at the server backend. Added Service to store data at the from end
+`dataFactory`.
+-16/06/2015 : Added Parser for Maf and Clinical Data
+-19/06/2015 : Boxplot, line plot and phylogenetic tree. Example dataset.
 
 
 ## Introduction
@@ -41,6 +45,8 @@ KingFisher uses JUnit and Jasmine for testing.
 
 `mvn jasmine:bdd` - This will launch server that binds to port 8234 on the localhost `localhost:8234`
 
+**Jasmine test on the command is not working at the momemnt**
+
 ### To build kingfisher
 
 `mvn build` - This will generate a war file in `target/` . It should have the following filename: `kingfisherboot-X.X.X.RELEASE.war` where `X.X.X` refer to the version number of the application.
@@ -54,7 +60,6 @@ KingFisher uses JUnit and Jasmine for testing.
 Pop your war file into your tomcat `webapp` directory
 
 For more information about deploying applications. Please refer to [tomcat documentation](https://tomcat.apache.org/tomcat-7.0-doc/appdev/deployment.html) or have a look at cbioportal's [wiki page](https://github.com/cBioPortal/cbioportal/wiki)
- 
 
 ## Route map
 
@@ -65,13 +70,7 @@ GET | /prototype | 200 | prototype.html |  `src/main/resources/template/prototyp
 GET | /rest | 200 | application/json | JSON object of all entries in database
 POST| /rest | 200 |  xhr | Post data |
 GET | /js/* | 200 | *.js | javascript libraries |
-
-
-
-
-
-
-
+GET | /hclust| 200 | Do hiercherical clustering |newick format representing hiercherical clustering results
 
 
 

@@ -1,0 +1,48 @@
+
+
+            mockClinical.push({ Tumor_Sample_Barcode: "SampleA-1",
+                                Biopsy_Time: "1",
+                                Treatment: "TreatmentA"})
+
+            mockClinical.push({ Tumor_Sample_Barcode: "SampleA-2",
+                Biopsy_Time: "2",
+                Treatment: "TreatmentB"})
+
+                       var mutationA_1 = {
+                                Hugo_Symbol: "TP53",
+                                Entrez_Gene_Id: "7157",
+                                NCBI_Build: "GRCh38.p2",
+                                Chromosome: "chr17",
+                                Start_Position: "100",
+                                End_Position: "101",
+                                Strand: "+",
+                                Reference_Allele: "A",
+                                Tumor_Seq_Allele1: "T",
+                                Tumor_Sample_Barcode: "SampleA-1",
+                                Score: "0.1"
+                            };
+
+                            // Copy the same mutation but gives a different barcode and score
+                            var mutationA_2 = angular.copy(mutationA_1);
+                            mutationA_2.Tumor_Sample_Barcode = "SampleA-2";
+                            mutationA_2.Score = "0.2";
+
+                            // New mutation, same sample as SampleA-1.
+                            var mutationB_1 = {
+                                Hugo_Symbol: "AKT1",
+                                Entrez_Gene_Id: "7121",
+                                NCBI_Build: "GRCh38.p2",
+                                Chromosome: "chr11",
+                                Start_Position: "700",
+                                End_Position: "701",
+                                Strand: "+",
+                                Reference_Allele: "A",
+                                Tumor_Seq_Allele1: "T",
+                                Tumor_Sample_Barcode: "SampleA-1",
+                                Score: "0.4"
+                            };
+
+                            // mutationB_2, same mutation as B but different time sample
+                            var mutationB_2 = angular.copy(mutationB_1);
+                            mutationB_2.Tumor_Sample_Barcode = "SampleA-2";
+                            mutationB_2.Score = "0.6";
