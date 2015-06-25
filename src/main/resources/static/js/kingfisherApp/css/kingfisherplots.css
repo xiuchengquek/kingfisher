@@ -1,0 +1,5 @@
+
+/** --- css for line plots **/
+.selected circle {
+    stroke : #110f11;
+}

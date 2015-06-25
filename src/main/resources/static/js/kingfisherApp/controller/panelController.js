@@ -5,18 +5,30 @@
 
 
 angular.module('kingFisherApp')
-    .controller('kingFisherCtrl', function($scope, $http, dataLoader){
+    .controller('kingFisherCtrl', function($scope, $http, dataLoader, mutationClusters, plotParsers){
 
         $scope.data = {};
         $scope.results = {};
+        $scope.lineplot = {};
+
+
         $scope.update = function() {
             dataLoader.loadAndValidate($scope.data.maf, $scope.data.clinical);
-            dataLoader.doCall().then(function(results){
-                var results = { newick : results.data, vafMap :dataLoader.getVafMap(), timePoint : dataLoader.getTimePoint()  }
+            dataLoader.doHClust().then(function (results) {
+                $scope.newick = results.data;
+                $scope.lineplot = {vafMap: dataLoader.getVafMap(), timePoint: dataLoader.getTimePoint()};
                 $scope.results = results;
                 $('#headingTwoLink').trigger('click')
             });
-        };
+        }
+
+        $scope.$on('clusterChanged', function(){
+            // cluster data looks like color : [ samples ]
+            console.log('FUCK YOU THIS' , dataLoader.getVafMap())
+            $scope.boxplot = plotParsers.parseBox(dataLoader.getVafMap(), mutationClusters.getClusters());
+            $scope.$digest()
+        });
+
 
         $scope.loadSample= function() {
             var mockClinical = ["Tumor_Sample_Barcode\tBiopsy_Time\tTreatment",
@@ -26,19 +38,9 @@ angular.module('kingFisherApp')
             ];
 
             var mockClinical = mockClinical.join("\n");
-            $http.get('js/kingfisherApp/components/controlPanel/example.tsv').then(function(results){
+            $http.get('js/kingfisherApp/directives/templates/example.tsv').then(function(results){
                 $scope.data.maf = results.data;
                 $scope.data.clinical = mockClinical;
             })
         };
 });
-/**
- * Created by xiuchengquek on 14/06/15.
- */
-angular.module('kingFisherApp')
-    .directive('userinput', function(){
-        return {
-            templateUrl : "js/kingfisherApp/components/controlPanel/kingFisherForm.html"
-        }
-    });
-

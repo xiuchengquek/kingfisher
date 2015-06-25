@@ -153,8 +153,8 @@
                         <source>${basedir}/src/main/resources/static/js/kingfisherApp/main.js</source>
                         <source>${basedir}/src/main/resources/static/js/kingfisherApp/app.js</source>
                         <source>${basedir}/src/main/resources/static/js/kingfisherApp/shared/dataSources/dataFactory.js</source>
-                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/components/controlPanel/controlPanelController.js</source>
-                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/components/dataUtil/dataUtil.js</source>
+                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/components/controlPanel/panelController.js</source>
+                        <source>${basedir}/src/main/resources/static/js/kingfisherApp/components/dataUtil/dataFactory.js</source>
 
 
 
