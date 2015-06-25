@@ -1,0 +1,13 @@
+{
+  "name": "newick",
+  "homepage": "https://github.com/jasondavies/newick.js",
+  "_release": "98de160777",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "98de16077753acacbb37350749f02084ae4eefd8"
+  },
+  "_source": "https://github.com/jasondavies/newick.js.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/jasondavies/newick.js.git"
+}
