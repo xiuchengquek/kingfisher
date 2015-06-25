@@ -1,0 +1,34 @@
+{
+  "name": "kingfisher",
+  "version": "0.0.0",
+  "authors": [
+    "xiuchengquek <biobirdman@gmail.com>"
+  ],
+  "description": "kingfisher application for visualisation of tumor heterogeneity",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "angular": "~1.4.0",
+    "angular-route": "~1.4.0",
+    "angular-loader": "~1.4.0",
+    "angular-mocks": "~1.4.0",
+    "angular-resource" : "~1.4.0",
+    "html5-boilerplate": "~5.2.0",
+    "d3" : "~3.5.5",
+    "newick" : "https://github.com/jasondavies/newick.js.git",
+    "d3.phylogram" : "https://gist.github.com/1036776.git",
+    "spectrum" : "~1.7.0",
+    "handsontable"  : "~0.15.0",
+    "numeral" : "~1.5.3",
+    "angular-smart-table" : "~2.1.0",
+    "lodash" : "~3.1.0",
+    "isotope" :  "~1.5.25",
+    "SmoothScroll" : "https://gist.github.com/6477177.git",
+    "bootstrap" : "~3.3.2"
+
+  }
+}

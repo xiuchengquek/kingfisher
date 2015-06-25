@@ -1,0 +1,12 @@
+{
+  "name": "SmoothScroll",
+  "_release": "fa20f3655c",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "fa20f3655c5a780df2662e378b2ccee2e7a945f4"
+  },
+  "_source": "https://gist.github.com/6477177.git",
+  "_target": "*",
+  "_originalSource": "https://gist.github.com/6477177.git"
+}

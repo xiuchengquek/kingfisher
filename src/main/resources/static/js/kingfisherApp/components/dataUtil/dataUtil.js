@@ -416,8 +416,6 @@ angular.module('kingFisherApp')
 
 });
 
-
-
 angular.module('kingFisherApp')
     .factory('d3Helper', function(){
 

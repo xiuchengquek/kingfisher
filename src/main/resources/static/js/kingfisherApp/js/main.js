@@ -5,11 +5,7 @@
 //
 
 function main() {
-
 (function () {
-
-
-
 	$('a.page-scroll').click(function() {
 		if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
 			var target = $(this.hash);
@@ -40,7 +36,5 @@ function main() {
         offset: 80
     })
 }());
-
-
 }
 main();

@@ -1,0 +1,12 @@
+{
+  "name": "d3.phylogram",
+  "_release": "3d0e556d5c",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "3d0e556d5c891a6b3851a38377457d86440bfd00"
+  },
+  "_source": "https://gist.github.com/1036776.git",
+  "_target": "*",
+  "_originalSource": "https://gist.github.com/1036776.git"
+}
