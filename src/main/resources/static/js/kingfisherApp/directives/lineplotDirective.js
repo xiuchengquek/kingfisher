@@ -3,7 +3,7 @@
  */
 
 angular.module('kingFisherApp')
-    .directive('lineplot', function(d3Helper){
+    .directive('lineplot', function(){
         return {
             restrict : 'E',
             scope : {
@@ -25,9 +25,6 @@ angular.module('kingFisherApp')
                     var x = d3.scale.ordinal()
                         .domain(timePoint)
                         .rangePoints([0, width]);
-
-
-                    console.log(timePoint)
 
                     var y = d3.scale.linear()
                         .domain([vafMax, vafMin])

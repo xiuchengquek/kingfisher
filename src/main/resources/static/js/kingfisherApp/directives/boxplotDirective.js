@@ -1,9 +1,5 @@
-/**
- * Created by xiuchengquek on 19/06/15.
- */
-
-angular.module('kingFisherApp')
-    .directive('boxplot', function(d3Helper){
+angular.module(['kingFisherApp'])
+    .directive('boxplot', function () {
         return {
             scope: {
                 data: "="
@@ -13,34 +9,34 @@ angular.module('kingFisherApp')
                 d3.box = function () {
                     var width = 1,
                         height = 1,
-                        duration = 0,
                         domain = null,
+                        xDomain = null,
                         value = Number,
                         whiskers = boxWhiskers,
-                        quartiles = boxQuartiles,
-                        showLabels = true, // whether or not to show text labels
-                        tickFormat = null;
+                        quartiles = boxQuartiles;
+
 
                     // For each small multiple…
                     function box(g) {
                         g.each(function (data, i) {
-
-                            var d = data.vafScore.sort(d3.ascending)
-
+                            // data looks like this {x : 'mutation' , y : [] }
+                            data.y = data.y.sort(d3.ascending);
+                            var d = data;
+                            var color = data.groupCol
 
                             var g = d3.select(this),
-                                n = d.length,
-                                min = d[0],
-                                max = d[n - 1];
-                           // Compute quartiles. Must return exactly 3 elements.
+                                n = d.y.length,
+                                min = d.y[0],
+                                max = d.y[n - 1];
+                            // Compute quartiles. Must return exactly 3 elements.
                             var quartileData = d.quartiles = quartiles(d);
 
-
+                            g.attr('id', data.x)
 
                             // Compute whiskers. Must return exactly 2 elements, or null.
                             var whiskerIndices = whiskers && whiskers.call(this, d, i),
                                 whiskerData = whiskerIndices && whiskerIndices.map(function (i) {
-                                        return d[i];
+                                        return d.y[i]
                                     });
 
                             // Compute outliers. If no whiskers are specified, all data are "outliers".
@@ -51,7 +47,7 @@ angular.module('kingFisherApp')
 
                             // Compute the new x-scale.
                             var x1 = d3.scale.linear()
-                                .domain(domain && domain.call(this, d, i) || [min, max])
+                                .domain(domain && domain.call(this, d.y, i) || [min, max])
                                 .range([height, 0]);
 
                             // Retrieve the old x-scale, if this is an update.
@@ -74,18 +70,17 @@ angular.module('kingFisherApp')
 
                             //vertical line
                             center.enter().insert("line", "rect")
-                                .attr("class", "center")
-                                .attr("x1", width / 2)
+                                .attr("class", "center column")
+                                .attr("x1", xDomain(d.x) + width / 2)
                                 .attr("y1", function (d) {
                                     return x0(d[0]);
                                 })
-                                .attr("x2", width / 2)
+                                .attr("x2", xDomain(d.x) + width / 2)
                                 .attr("y2", function (d) {
                                     return x0(d[1]);
                                 })
                                 .style("opacity", 1e-6)
-                                .transition()
-                                .duration(duration)
+
                                 .style("opacity", 1)
                                 .attr("y1", function (d) {
                                     return x1(d[0]);
@@ -93,77 +88,45 @@ angular.module('kingFisherApp')
                                 .attr("y2", function (d) {
                                     return x1(d[1]);
                                 });
-
-                            center.transition()
-                                .duration(duration)
-                                .style("opacity", 1)
-                                .attr("y1", function (d) {
-                                    return x1(d[0]);
-                                })
-                                .attr("y2", function (d) {
-                                    return x1(d[1]);
-                                });
-
-                            center.exit().transition()
-                                .duration(duration)
-                                .style("opacity", 1e-6)
-                                .attr("y1", function (d) {
-                                    return x1(d[0]);
-                                })
-                                .attr("y2", function (d) {
-                                    return x1(d[1]);
-                                })
-                                .remove();
 
                             // Update innerquartile box.
                             var box = g.selectAll("rect.box")
                                 .data([quartileData]);
 
                             box.enter().append("rect")
-                                .attr("class", "box")
-                                .attr("x", 0)
+                                .attr("class", "box column")
+                                .attr("x", function () {
+                                    return xDomain(d.x)
+                                })
                                 .attr("y", function (d) {
-                                    return x0(d[2]);
+                                    return x0(d[2])
                                 })
                                 .attr("width", width)
+                                .attr('fill', color)
                                 .attr("height", function (d) {
-                                    return x0(d[0]) - x0(d[2]);
+                                    return x0(d[0]) - x0(d[2])
                                 })
-                                .transition()
-                                .duration(duration)
                                 .attr("y", function (d) {
-                                    return x1(d[2]);
+                                    return x1(d[2])
                                 })
                                 .attr("height", function (d) {
-                                    return x1(d[0]) - x1(d[2]);
-                                });
-
-                            box.transition()
-                                .duration(duration)
-                                .attr("y", function (d) {
-                                    return x1(d[2]);
+                                    return x1(d[0]) - x1(d[2])
                                 })
-                                .attr("height", function (d) {
-                                    return x1(d[0]) - x1(d[2]);
-                                });
-
+                            ;
                             // Update median line.
                             var medianLine = g.selectAll("line.median")
                                 .data([quartileData[1]]);
 
                             medianLine.enter().append("line")
-                                .attr("class", "median")
-                                .attr("x1", 0)
+                                .attr("class", "median column")
+                                .attr("x1", function () {
+                                    return xDomain(d.x)
+                                })
                                 .attr("y1", x0)
-                                .attr("x2", width)
+                                .attr("x2", function () {
+                                    return xDomain(d.x) + width
+                                })
                                 .attr("y2", x0)
-                                .transition()
-                                .duration(duration)
-                                .attr("y1", x1)
-                                .attr("y2", x1);
-
-                            medianLine.transition()
-                                .duration(duration)
                                 .attr("y1", x1)
                                 .attr("y2", x1);
 
@@ -171,134 +134,43 @@ angular.module('kingFisherApp')
                             var whisker = g.selectAll("line.whisker")
                                 .data(whiskerData || []);
 
-                            whisker.enter().insert("line", "circle, text")
-                                .attr("class", "whisker")
-                                .attr("x1", 0)
+                            whisker.enter().append("line", "circle, text")
+                                .attr("class", "whisker column")
+                                .attr("x1", function () {
+                                    return xDomain(d.x)
+                                })
                                 .attr("y1", x0)
-                                .attr("x2", 0 + width)
+                                .attr("x2", function () {
+                                    return xDomain(d.x) + width
+                                })
                                 .attr("y2", x0)
                                 .style("opacity", 1e-6)
-                                .transition()
-                                .duration(duration)
                                 .attr("y1", x1)
                                 .attr("y2", x1)
                                 .style("opacity", 1);
-
-                            whisker.transition()
-                                .duration(duration)
-                                .attr("y1", x1)
-                                .attr("y2", x1)
-                                .style("opacity", 1);
-
-                            whisker.exit().transition()
-                                .duration(duration)
-                                .attr("y1", x1)
-                                .attr("y2", x1)
-                                .style("opacity", 1e-6)
-                                .remove();
 
                             // Update outliers.
                             var outlier = g.selectAll("circle.outlier")
                                 .data(outlierIndices, Number);
 
                             outlier.enter().insert("circle", "text")
-                                .attr("class", "outlier")
+                                .attr("class", "outlier column")
                                 .attr("r", 5)
-                                .attr("cx", width / 2)
+                                .attr("cx", function () {
+                                    return xDomain(d.x) + width / 2
+                                })
                                 .attr("cy", function (i) {
-                                    return x0(d[i]);
+                                    return x0(d.y[i])
                                 })
                                 .style("opacity", 1e-6)
-                                .transition()
-                                .duration(duration)
                                 .attr("cy", function (i) {
-                                    return x1(d[i]);
+                                    return x1(d.y[i])
                                 })
                                 .style("opacity", 1);
-
-                            outlier.transition()
-                                .duration(duration)
-                                .attr("cy", function (i) {
-                                    return x1(d[i]);
-                                })
-                                .style("opacity", 1);
-
-                            outlier.exit().transition()
-                                .duration(duration)
-                                .attr("cy", function (i) {
-                                    return x1(d[i]);
-                                })
-                                .style("opacity", 1e-6)
-                                .remove();
-
-                            // Compute the tick format.
-                            var format = tickFormat || x1.tickFormat(8);
-
-                            // Update box ticks.
-                            var boxTick = g.selectAll("text.box")
-                                .data(quartileData);
-                            if (showLabels == true) {
-                                boxTick.enter().append("text")
-                                    .attr("class", "box")
-                                    .attr("dy", ".3em")
-                                    .attr("dx", function (d, i) {
-                                        return i & 1 ? 6 : -6
-                                    })
-                                    .attr("x", function (d, i) {
-                                        return i & 1 ? +width : 0
-                                    })
-                                    .attr("y", x0)
-                                    .attr("text-anchor", function (d, i) {
-                                        return i & 1 ? "start" : "end";
-                                    })
-                                    .text(format)
-                                    .transition()
-                                    .duration(duration)
-                                    .attr("y", x1);
-                            }
-
-                            boxTick.transition()
-                                .duration(duration)
-                                .text(format)
-                                .attr("y", x1);
-
-                            // Update whisker ticks. These are handled separately from the box
-                            // ticks because they may or may not exist, and we want don't want
-                            // to join box ticks pre-transition with whisker ticks post-.
-                            var whiskerTick = g.selectAll("text.whisker")
-                                .data(whiskerData || []);
-                            if (showLabels == true) {
-                                whiskerTick.enter().append("text")
-                                    .attr("class", "whisker")
-                                    .attr("dy", ".3em")
-                                    .attr("dx", 6)
-                                    .attr("x", width)
-                                    .attr("y", x0)
-
-                                    .text(format)
-                                    .style("opacity", 1e-6)
-                                    .transition()
-                                    .duration(duration)
-                                    .attr("y", x1)
-                                    .style("opacity", 1);
-                            }
-                            whiskerTick.transition()
-                                .duration(duration)
-                                .text(format)
-                                .attr("y", x1)
-                                .style("opacity", 1);
-
-                            whiskerTick.exit().transition()
-                                .duration(duration)
-                                .attr("y", x1)
-                                .style("opacity", 1e-6)
-                                .remove();
                         });
-                        d3.timer.flush();
                     }
 
                     box.width = function (x) {
-
                         if (!arguments.length) return width;
                         width = x;
                         return box;
@@ -328,6 +200,12 @@ angular.module('kingFisherApp')
                         return box;
                     };
 
+                    box.xDomain = function (x) {
+                        if (!arguments.length) return domain;
+                        xDomain = x == null ? x : d3.functor(x);
+                        return box;
+                    };
+
                     box.value = function (x) {
                         if (!arguments.length) return value;
                         value = x;
@@ -337,12 +215,6 @@ angular.module('kingFisherApp')
                     box.whiskers = function (x) {
                         if (!arguments.length) return whiskers;
                         whiskers = x;
-                        return box;
-                    };
-
-                    box.showLabels = function (x) {
-                        if (!arguments.length) return showLabels;
-                        showLabels = x;
                         return box;
                     };
 
@@ -356,38 +228,77 @@ angular.module('kingFisherApp')
                 };
 
                 function boxWhiskers(d) {
-                    return [0, d.length];
+                    return [0, d.y.length];
                 }
 
                 function boxQuartiles(d) {
                     return [
-                        d3.quantile(d, .25),
-                        d3.quantile(d, .5),
-                        d3.quantile(d, .75)
+                        d3.quantile(d.y, .25),
+                        d3.quantile(d.y, .5),
+                        d3.quantile(d.y, .75)
                     ];
                 }
 
-
-                function plotBoxPlot(data) {
+                function plotBoxPlot(data, order) {
                     var margin = {top: 20, right: 20, bottom: 180, left: 50},
                         height = 500 - margin.top - margin.bottom,
                         width = 320 - margin.left - margin.right;
 
-                    var maxVaf = d3.max(data, function (d) { return d3.max(d.vafScore)});
-                    var minVaf = d3.min(data, function (d) { return d3.min(d.vafScore)});
-
-                    var mutations = [];
-                    var boxPlotData = [];
-                    angular.forEach(data, function(value, key){
-                        mutations.push(value.mutation);
+                    var maxVaf = d3.max(data, function (d) {
+                        return d3.max(d.y)
+                    });
+                    var minVaf = d3.min(data, function (d) {
+                        return d3.min(d.y)
                     });
 
+                    var xValues = [];
+                    //** implement order if not defined order by median vaf //
+                    if (!order) {
+                        var findMean = function (arr) {
+                            var sum = arr.reduce(function (a, b) {
+                                return a + parseFloat(b)
+                            });
+                            var ave = sum / arr.length;
+                            return ave
+                        };
+
+                        var mutMeans = [];
+
+                        angular.forEach(data, function (value, key) {
+
+                            var mean = findMean(value.y);
+                            mutMeans.push({x: value.x, mean: mean});
+                        });
+                        mutMeans = mutMeans.sort(function (x, y) {
+                            return d3.descending(x.mean, y.mean)
+                        });
+
+                        xValues = mutMeans.map(function (x) {
+                            return x.x
+                        })
+                    }
+                    else {
+                        xValues = order;
+                    }
+
+                    var x = d3.scale.ordinal()
+                        .domain(xValues)
+                        .rangeRoundBands([0, width], 0.7, 0.3);
+
+                    var xMap = x.domain().map(function (d) {
+
+                        return {
+                            'item': d,
+                            'start': x(d)
+                        }
+
+                    });
 
                     var chart = d3.box()
                         .whiskers(iqr(1.5))
                         .height(height)
                         .domain([minVaf, maxVaf])
-                        .showLabels(false)
+                        .xDomain(x);
 
 
                     var svg = d3.select("boxplot").append("svg")
@@ -396,11 +307,6 @@ angular.module('kingFisherApp')
                         .attr("class", "box")
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                    // x scale
-                    var x = d3.scale.ordinal()
-                        .domain(mutations)
-                        .rangeRoundBands([0, width], 0.7, 0.3);
 
                     // x axis
                     var xAxis = d3.svg.axis()
@@ -421,10 +327,8 @@ angular.module('kingFisherApp')
                     svg.selectAll(".box")
                         .data(data)
                         .enter().append("g")
-                        .attr("transform", function (d) {
-                            return "translate(" + x(d.mutation) + "," + margin.top + ")";                        })
+                        .attr('transform', 'translate(0,' + margin.top + ')')
                         .call(chart.width(x.rangeBand()));
-
 
                     // add a title
                     svg.append("text")
@@ -456,51 +360,38 @@ angular.module('kingFisherApp')
                         // text label for the x axis
                         .attr("dy", "0.5em")
                         .attr("dx", "-1em")
+                        .attr('id', function (d, i) {
+                            return xValues[i];
+                        })
 
                         .style("text-anchor", "end")
                         .attr("transform", "rotate(-65)")
                         .style("font-size", "10px");
 
-
                     function iqr(k) {
-                        return function(d, i) {
+                        return function (d, i) {
                             var q1 = d.quartiles[0],
                                 q3 = d.quartiles[2],
                                 iqr = (q3 - q1) * k,
                                 i = -1,
-                                j = d.length;
-                            while (d[++i] < q1 - iqr);
-                            while (d[--j] > q3 + iqr);
+                                j = d.y.length;
+                            while (d.y[++i] < q1 - iqr);
+                            while (d.y[--j] > q3 + iqr);
                             return [i, j];
                         };
                     }
                 }
 
+                scope.$watch('data', function (newVal, oldVal) {
+                    if (newVal !== undefined) {
+                        console.log('this is the newval' , newVal)
 
-                scope.$watch('data', function(newVal, oldVal){
-                    if (newVal.vafMap !== undefined) {
-                        var timePoint = newVal.timePoint;
-                        var vafMap = newVal.vafMap
-                        var dataLong = [];
-                        angular.forEach(vafMap, function(value, key){
+                        plotBoxPlot(newVal);
 
-                            this.push({mutation : key, vafScore : value.map(parseFloat)})
-
-
-                        },dataLong);
-
-                       plotBoxPlot(dataLong);
-
-                    }})
+                    }
+                })
 
 
-
-            }}});
-
-
-
-
-
-
-
-
+            }
+        }
+    })
