@@ -22,7 +22,6 @@ angular.module('kingFisherApp')
             var _nodeProfiles = {};
 
             angular.forEach(vafMap, function( value, key){
-                console.log(_nodeProfiles)
                 _nodeProfiles[key] = color(key);
             });
 
@@ -94,9 +93,9 @@ angular.module('kingFisherApp')
                         var membersScore = members.map(function (v) {
                             return vafMap[v]
                         });
-                        var merged = []
+                        var merged = [];
 
-                        console.log(membersScore)
+
                         // flatten array of array - this will be the y value
                         merged = membersScore.concat.apply(merged, membersScore);
 
@@ -142,11 +141,11 @@ angular.module('kingFisherApp')
                     });
 
                     // now find the median of each time point
-                    var tMemberScore = tMemberScore.map(findMean);
+                    tMemberScore = tMemberScore.map(findMean);
 
                     // now remerge
                     var merged = [];
-                    var merged = membersScore.concat.apply(merged, tMemberScore);
+                    merged = membersScore.concat.apply(merged, tMemberScore);
                     var mean = findMean(merged);
 
                     angular.forEach(members, function(value, index){
@@ -154,22 +153,53 @@ angular.module('kingFisherApp')
                         this.push({
                             mut : value , cluster : mutations, cluster_mean :  mean.toFixed(2) }
                         )
-
-
-
-
-
                     },table)
+                });
+                return table;
+            },
+
+            parseTree: function (vafMap, clusters, timePoint) {
+
+                var table     = [];
+                var mutations = Object.keys(clusters);
 
 
 
-                })
+                angular.forEach(mutations, function (mutations, index) {
+                    // get the member
+                    var members = clusters[mutations];
+                    // get the value of each members
+                    var membersScore = members.map(function (v) {
+                        return vafMap[v]
+                    });
+                    // transpose array
+
+                    var tMemberScore = membersScore[0].map(function (col, i) {
+                        return membersScore.map(function (row) {
+                            return row[i]
+                        })
+                    });
+
+                    // now find the median of each time point
+                    tMemberScore = tMemberScore.map(findMean);
+
+                    // now remerge
+                    var merged = [];
+                    merged = membersScore.concat.apply(merged, tMemberScore);
+                    var mean   = findMean(merged);
+
+                    angular.forEach(members, function (value, index) {
+
+                        this.push({
+                                mut: value, cluster: mutations, cluster_mean: mean.toFixed(2)
+                            }
+                        )
+                    }, table)
+                });
 
                 return table;
-
-
-
             },
+
 
 
             parseLine: function (vafMap, timePoint, clusters){

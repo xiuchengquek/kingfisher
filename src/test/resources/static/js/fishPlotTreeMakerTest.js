@@ -2,150 +2,73 @@
  * Created by xiuchengquek on 29/06/15.
  */
 
-
+// TODO : Add more robust test., test different scenrio
 
 describe('Testing Algorithim', function(){
 
-    var doubleError;
-    var singleError;
-    var noError;
-    var trimmedSingleError;
-    var fishPlotTreeMaker;
-    var trimmedDoubleError, recurseDoubleError, recurseDoubleErrorSameMut, recurseDoubleErrorSameMutDifftp;
-
-
-    var $provider;
+    var fishPlotFactory, fishPlotAlgo;
+    var mock;
+    var expected, expectedTree;
 
     beforeEach(module('kingFisherApp'));
 
 
-    beforeEach(inject(function(_fishPlotFactory_){
+    beforeEach(inject(function(_fishPlotFactory_) {
 
-        fishPlotTreeMaker = _fishPlotFactory_
-        fishPlotTreeMaker = fishPlotTreeMaker.fishPlotTreeMaker;
+        fishPlotFactory = _fishPlotFactory_;
 
-        singleError = {'A'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }],
-            'B' : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 4 },{'mut' : 3, 'score' : 2 }],
-            'C'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }]};
+        mock = {
+            pretreatment: [
+                {mut: 'IDH2_p.R140Q',   score: 0.37, mean: 0.2},
+                {mut: 'SETBP1_p.D868N', score: 0.10, mean: 0.22},
+                {mut: 'RUNX1_p.K83*',   score: 0.38, mean: 0.22},
+                {mut: 'ASXL1_p.Q760*',  score: 0.44, mean: 0.47},
+                {mut: 'RUNX1_p.R174*',  score: 0.49, mean: 0.49},
+                {mut: 'SRSF2_p.P95H',   score: 0.50, mean: 0.6}
+            ],
 
-
-        doubleError = {'A'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }],
-            'B' : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 4 },{'mut' : 3, 'score' : 2 }],
-            'C'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 6 },{'mut' : 3, 'score' : 2 }]};
-
-        noError  = {'A'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }],
-            'B' : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }],
-            'C'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }]};
-
-        trimmedSingleError = { 'A'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }],
-            'B' : [{'mut' : 1, 'score' : 1 },{'mut' : 3, 'score' : 2 }],
-            'C'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }]};
-
-        trimmedDoubleError = { 'A'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }],
-            'B' : [{'mut' : 1, 'score' : 1 },{'mut' : 3, 'score' : 2 }],
-            'C'  : [{'mut' : 1, 'score' : 1 },{'mut' : 3, 'score' : 2 }]};
-        // mut 1 in time point A is beigger than mutation 2 and 3
-        recurseDoubleError = { 'A'  : [{'mut' : 1, 'score' : 5 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 1 }],
-            'B' : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }],
-            'C'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }]};
-
-        // mut 1 in time point A is beigger than mutation 2 and 3
-        recurseDoubleErrorSameMut = { 'A'  : [{'mut' : 1, 'score' : 5 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 1 }],
-            'B' : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }],
-            'C'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }]};
+            C4D1: [
+                {mut: 'IDH2_p.R140Q',   score: 0.16, mean: 0.2},
+                {mut: 'SETBP1_p.D868N', score: 0.24, mean: 0.22},
+                {mut: 'RUNX1_p.K83*',   score: 0.22, mean: 0.22},
+                {mut: 'ASXL1_p.Q760*',  score: 0.48, mean: 0.47},
+                {mut: 'RUNX1_p.R174*',  score: 0.49, mean: 0.49},
+                {mut: 'SRSF2_p.P95H',   score: 0.68, mean: 0.6}
+            ],
 
 
-        recurseDoubleErrorSameMutDifftp = { 'A'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 1 }],
-            'B' : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 4 },{'mut' : 3, 'score' : 2 }],
-            'C'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }]};
+            pC7D1: [
+                {mut: 'IDH2_p.R140Q',   score: 0.07, mean: 0.2},
+                {mut: 'SETBP1_p.D868N', score: 0.32, mean: 0.22},
+                {mut: 'RUNX1_p.K83*',   score: 0.07, mean: 0.22},
+                {mut: 'ASXL1_p.Q760*',  score: 0.49, mean: 0.47},
+                {mut: 'RUNX1_p.R174*',  score: 0.49, mean: 0.49},
+                {mut: 'SRSF2_p.P95H',   score: 0.62, mean: 0.6}
+            ]
+        };
 
-
-        recurseDoubleErrorSameMut = { 'A'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 1 },
-                                                {'mut' : 4, 'score' : 1 },{'mut' : 5, 'score' : 2 },{'mut' : 3, 'score' : 1 }],
-            'B' : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 4 },{'mut' : 3, 'score' : 2 }],
-            'C'  : [{'mut' : 1, 'score' : 1 },{'mut' : 2, 'score' : 2 },{'mut' : 3, 'score' : 2 }]};
-
-
-
+        expectedTree = {
+            mut : "SRSF2_p.P95H",
+            children : [{ mut : "RUNX1_p.R174*" , parent : "SRSF2_p.P95H",
+                children : [ {mut: "ASXL1_p.Q760*", parent : "RUNX1_p.R174*",
+                    children : [{mut: "RUNX1_p.K83*", parent : "ASXL1_p.Q760*",
+                        children : [{mut : "IDH2_p.R140Q", parent : "RUNX1_p.K83*"}]},
+                                {mut : "SETBP1_p.D868N", parent :"ASXL1_p.Q760*"}
+                    ]
+                }]
+            }]
+        };
 
     }));
 
-
-
     it('test that noError Gives no Array', function(){
-        expect(fishPlotTreeMaker.checkBranches(noError).length).toBe(0)
+
+        var paths = fishPlotFactory.findPaths(mock);
+        var tree = fishPlotFactory.assemblePath(paths);
+        expect(tree).toEqual(expectedTree);
 
     })
-
-
-    it('test that Single/Multiple Error is detected', function(){
-        expect(fishPlotTreeMaker.checkBranches(singleError).length).toBe(1);
-        expect(fishPlotTreeMaker.checkBranches(singleError)[0].mut).toBe(2);
-        expect(fishPlotTreeMaker.checkBranches(singleError)[0].timePoint).toBe('B');
-        expect(fishPlotTreeMaker.checkBranches(doubleError).length).toBe(2);
-        expect(fishPlotTreeMaker.checkBranches(doubleError)[0].mut).toBe(2);
-        expect(fishPlotTreeMaker.checkBranches(doubleError)[0].timePoint).toBe('B');
-        expect(fishPlotTreeMaker.checkBranches(doubleError)[1].mut).toBe(2);
-        expect(fishPlotTreeMaker.checkBranches(doubleError)[1].timePoint).toBe('C');
-    })
-
-    it('check that remove branches works', function(){
-
-        var singleBranch = fishPlotTreeMaker.checkBranches(singleError);
-        var doubleBranch = fishPlotTreeMaker.checkBranches(doubleError);
-
-        expect(fishPlotTreeMaker.removeDamaged(singleError, singleBranch)).toEqual(trimmedSingleError)
-        expect(fishPlotTreeMaker.removeDamaged(doubleError, doubleBranch)).toEqual(trimmedDoubleError)
-
-
-
-    })
-
-    it('check to make sure that branches are not deleted if there is no error', function(){
-
-        var noBranch = fishPlotTreeMaker.checkBranches(noError);
-        expect(fishPlotTreeMaker.removeDamaged(noError, noBranch)).toEqual(noError);
-
-
-    })
-    it('check if recurse trimming works', function(){
-
-        var results = fishPlotTreeMaker.recursiveTrimmed(recurseDoubleError, []);
-        var keys = Object.keys(results)
-
-        console.log('thisis', results)
-        expect(keys.length).toBe(2);
-        expect(keys).toEqual(['1','2']);
-        expect(results['1'].timePoint).toEqual('A');
-        expect(results['2'].timePoint).toEqual('A');
-
-        var results = fishPlotTreeMaker.recursiveTrimmed(recurseDoubleError, []);
-        var keys = Object.keys(results)
-
-        console.log('thisis', results)
-        expect(keys.length).toBe(2);
-        expect(keys).toEqual(['1','2']);
-        expect(results['1'].timePoint).toEqual('A');
-        expect(results['2'].timePoint).toEqual('A');
-
-
-
-
-        results = fishPlotTreeMaker.recursiveTrimmed(recurseDoubleErrorSameMut, [])
-        console.log(results)
-        var keys = Object.keys(results)
-        expect(keys.length).toBe(1);
-        expect(results['2'].timePoint).toEqual('A');
-        expect(results['2'].conflict).toBe(3)
-
-
-
-    })
-
-
-
-
-})
+});
 
 
 
