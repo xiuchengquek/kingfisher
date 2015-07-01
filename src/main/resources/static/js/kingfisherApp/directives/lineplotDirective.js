@@ -9,25 +9,32 @@ angular.module('kingFisherApp')
             scope : {
                 data : '='
             },
+
+
+
             link : function(scope, element, attr){
 
-                function plotline(data, timePoint, vafMap){
+                function plotline(data){
                     var margin = {top: 20, right: 20, bottom: 50, left: 50},
                         height = 320 - margin.top - margin.bottom,
                         width = 320 -margin.left - margin.right;
 
                     //var autoWidth = new d3Helper.autoWidth(element, height, margin, minWidth);
+
+
                     //autoWidth.reWidth();
 
-                    var vafMax = d3.max(data, function(d) {return d3.max(d.values, function(v) {return v.vafScore}) ;});
-                    var vafMin = d3.min(data, function(d) {return d3.min(d.values, function(v) {return v.vafScore}) ;});
+                    var yMax = d3.max(data, function(d) {return d3.max(d.values, function(v) {return v.y}) ;});
+                    var yMin = d3.min(data, function(d) {return d3.min(d.values, function(v) {return v.y}) ;});
+
+                    var xDomain  = data[0].values.map(function(d) {return d.x});
 
                     var x = d3.scale.ordinal()
-                        .domain(timePoint)
+                        .domain(xDomain)
                         .rangePoints([0, width]);
 
                     var y = d3.scale.linear()
-                        .domain([vafMax, vafMin])
+                        .domain([0, yMax ])
                         .range([height, 0]);
 
                     var xAxis = d3.svg.axis()
@@ -38,16 +45,10 @@ angular.module('kingFisherApp')
                         .scale(y)
                         .orient("left");
 
-                    // need to standardise color scheme between plots,
-                    var color = d3.scale.category10()
-                        .domain(data.map(function(d){ return d.mutation}));
-
-
-
                     var line = d3.svg.line()
                         .interpolate("basis")
-                        .x(function(d){ return x(d.timePoint) })
-                        .y(function(d){ return y(d.vafScore)});
+                        .x(function(d){ return x(d.x) })
+                        .y(function(d){ return y(d.y)});
 
                     var svg = d3.select("lineplot").append("svg")
                         .attr("width", width + margin.left +  margin.right)
@@ -72,34 +73,31 @@ angular.module('kingFisherApp')
                         .style("text-anchor", "end")
                         .text("VAF Score");
 
-                    var mutations = svg.selectAll(".mutations")
+                    var mutations = svg.selectAll(".series")
                         .data(data)
                         .enter().append("g")
-                        .attr("class", "mutations");
+                        .attr("class", "series");
 
 
                     mutations.append("path")
                         .attr("class", "line")
                         .attr("d", function(d) { return line(d.values)})
-                        .attr("stroke", function(d) { return color(d.mutation)})
+                        .attr("stroke", function(d) { return  d.color})
                         .attr("fill", "none")
+
+                    mutations.append("text")
+                        .datum(function(d){ return { series : d.series, color : d.color}})
+                        .attr("x", 3)
+                        .attr("y", function(d, i) { return i + "em" })
+                        .text(function(d) { return d.series; })
+                        .attr("stroke", function(d){ return d.color})
+                        .attr("fill", function(d){ return d.color});
+
                 }
 
-
                 scope.$watch('data', function(newVal, oldVal){
-                    if (newVal.vafMap !== undefined) {
-                        var timePoint = newVal.timePoint;
-                        var vafMap = newVal.vafMap;
-                        var dataLong = [];
-                        angular.forEach(vafMap, function(mutation, name){
-                            var Entry = { mutation : name, values : [] };
-                            angular.forEach(mutation, function(vafScore, index ){
-                                Entry.values.push({ timePoint :  timePoint[index],
-                                    vafScore : parseFloat(vafScore) });
-                            });
-                            dataLong.push(Entry)
-                        });
-                        plotline(dataLong, timePoint);
+                    if (newVal !== undefined) {
+                        plotline(newVal);
                     }
                 })
             }

@@ -6,11 +6,38 @@
 
 
 angular.module('kingFisherApp')
-    .factory('mutationClusters', function ($rootScope) {
+    .factory('mutationClusters', function ($rootScope, $q) {
 
         var nodeProfiles = {};
         var clusters = [];
         var mutationClusters = {};
+
+        mutationClusters.initClusters = function(vafMap){
+            var deferred = $q.defer();
+
+            var color = d3.scale.category20().domain(
+                Object.keys(vafMap)
+            );
+            var _clusters = {};
+            var _nodeProfiles = {};
+
+            angular.forEach(vafMap, function( value, key){
+                console.log(_nodeProfiles)
+                _nodeProfiles[key] = color(key);
+            });
+
+            angular.forEach(_nodeProfiles, function (value, key) {
+                _clusters[value] = _clusters[value] || [];
+                _clusters[value].push(key);
+            });
+
+            clusters = _clusters;
+            nodeProfiles = _nodeProfiles;
+
+            deferred.resolve(clusters);
+
+            return deferred.promise
+        };
 
         mutationClusters.setClusters = function (newCluster) {
             angular.forEach(newCluster, function(fill, name){
@@ -41,16 +68,11 @@ angular.module('kingFisherApp')
 
         var findMean = function(arr) {
             var sum = arr.reduce(function(a,b){return parseFloat(a) + parseFloat(b) });
-            console.log('this is the sum' ,sum)
             var ave = sum/arr.length;
             return ave
         };
         return {
             parseBox: function (vafMap, clusters) {
-
-
-                console.log('wtf' , vafMap, clusters)
-
 
                 var clusters = clusters;
                 var boxplot = [];
@@ -58,14 +80,10 @@ angular.module('kingFisherApp')
                 if (!clusters) {
                     var color = d3.scale.category20();
                     angular.forEach(vafMap, function (value, key) {
-                        console.log('value and key', value, key)
                         this.push({x: key, y: value, members: [key], groupCol: color(key)})
                     }, boxplot)
                 }
                 else {
-
-
-                    console.log('fucka  dgo')
                     var clusterNo = 1;
                     var mutations = Object.keys(clusters);
                     angular.forEach(mutations, function (mutations, index) {
@@ -114,6 +132,7 @@ angular.module('kingFisherApp')
                         return vafMap[v]
                     });
 
+
                     // transpose array
 
                     var tMemberScore = membersScore[0].map(function (col, i) {
@@ -128,30 +147,52 @@ angular.module('kingFisherApp')
                     // now remerge
                     var merged = [];
                     var merged = membersScore.concat.apply(merged, tMemberScore);
-
                     var mean = findMean(merged);
 
+                    angular.forEach(members, function(value, index){
 
-                    // new Cluster name
-                    var clusterNo = index + 1;
-                    // create new cluster name and push value into
-                    var clusterName = 'cluster ' + clusterNo;
-                    if (members.length == 1) {
-                        clusterName = members
-                    }
+                        this.push({
+                            mut : value , cluster : mutations, cluster_mean :  mean.toFixed(2) }
+                        )
 
-                    this.push({
-                        x: clusterName, y: merged, members: members,
-                        groupCol: mutations, mean: mean
-                    })
 
-                }, table)
-            }
-        }
 
+
+
+                    },table)
+
+
+
+                })
+
+                return table;
+
+
+
+            },
+
+
+            parseLine: function (vafMap, timePoint, clusters){
+
+                var dataLong = [];
+
+                angular.forEach(vafMap, function(mutation, name){
+                    var color = clusters[name];
+                    var Entry = { series : name, values : [] , color : color };
+                    angular.forEach(mutation, function(vafScore, index ){
+                        Entry.values.push({ x :  timePoint[index],
+                            y : parseFloat(vafScore) });
+                    });
+                    dataLong.push(Entry);
+                });
+                return dataLong;
+
+
+            },
+        };
         // table is an array of mutations profile for each cluster.
+    });
 
 
 
-    })
 

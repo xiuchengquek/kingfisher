@@ -251,7 +251,6 @@ angular.module('kingFisherApp').factory('mergeMafClinical', function(){
             var refAllele = value.Reference_Allele;
             var tumAllele = value.Tumor_Seq_Allele1;
             var score = value.Score;
-
             var mutationName = hugoSymbol + "_g.[" + position + refAllele + ">" + tumAllele + "]";
             mutation[mutationName] = mutation[mutationName] || {};
             mutation[mutationName][sampleCode] = score;

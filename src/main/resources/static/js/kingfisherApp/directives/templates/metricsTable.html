@@ -1,0 +1,41 @@
+
+
+
+
+
+
+
+
+    <thead>
+
+        <tr><td  ng-repeat="(key, value) in data[0]">{{key}}</td></tr>
+
+
+
+    </thead>
+
+    <tbody>
+
+    <tr  ng-repeat="row in data">
+        <td> {{ row.mut }} </td>
+        <td> <i class="fa fa-circle" style=" color:{{ row.cluster }}"> </i>
+        </td>
+        <td> {{ row.cluster_mean}}        </td>
+
+
+    </tr>
+
+
+
+
+    </tbody>
+
+
+
+
+
+
+
+
+
+
