@@ -220,8 +220,8 @@ describe("dataUtilitiesTest", function () {
             mockClinical.push("SampleA-2\t2\tTreatmentA");
 
             expectedResults = { timePoint : ["SampleA-1", "SampleA-2"],
-                                vafMap : { "TP53:g.[100A>T]" : ["0.1","0.2"],
-                                           "AKT1:g.[700A>T]" : ["0.4", "0.6"] }
+                                vafMap : { "TP53_g.[100A>T]" : ["0.1","0.2"],
+                                           "AKT1_g.[700A>T]" : ["0.4", "0.6"] }
                                 };
 
 
@@ -242,7 +242,7 @@ describe("dataUtilitiesTest", function () {
 
             var results = mergeMafClincial(clinicaParserObj.dataValues, mafParserObj.dataValues)
 
-            expect(results).toEqual(expectedResults);
+            expect(results.vafMap).toEqual(expectedResults.vafMap);
 
 
         })

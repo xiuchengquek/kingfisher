@@ -385,7 +385,6 @@ angular.module(['kingFisherApp'])
                 scope.$watch('data', function (newVal, oldVal) {
                     if (newVal !== undefined) {
                         console.log('this is the newval' , newVal)
-
                         plotBoxPlot(newVal);
 
                     }

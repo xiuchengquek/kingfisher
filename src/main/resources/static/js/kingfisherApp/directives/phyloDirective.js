@@ -20,9 +20,20 @@ angular.module('kingFisherApp')
                 };
 
                 $scope.assignCluster = function () {
-                    angular.forEach($scope.selected, function (value, key) {
-                        d3.select("circle[name='" + value + "']").attr('fill', $scope.selectedColor)
-                    });
+
+
+
+                    d3.selectAll('g.leaf.node.selected').each(function(d, i){
+                        d3.select(this).select('circle').attr('fill', $scope.selectedColor)
+
+                    })
+
+
+
+
+                    //angular.forEach($scope.selected, function (value, key) {
+                      //  d3.select("circle[name='" + value + "']").attr('fill', $scope.selectedColor)
+                    //});
                     $scope.clearSelection();
                     $scope.buildCluster();
                 };
@@ -237,7 +248,7 @@ angular.module('kingFisherApp')
                 }
 
 
-                d3.phylogram.build = function (selector, nodes, options) {
+                d3.phylogram.build = function (selector, nodes, clusters,  options) {
                     options = options || {};
                     var w = options.width || d3.select(selector).style('width') || d3.select(selector).attr('width'),
                         h = options.height || d3.select(selector).style('height') || d3.select(selector).attr('height');
@@ -264,9 +275,6 @@ angular.module('kingFisherApp')
 
                     var yscale = scaleBranchLengths(nodes, w);
 
-                    var initColorScale = d3.scale.category20();
-
-
                     if (!options.skipTicks) {
                         vis.selectAll('line')
                             .data(yscale.ticks(10))
@@ -291,6 +299,9 @@ angular.module('kingFisherApp')
                                 return Math.round(d * 100) / 100;
                             });
                     }
+
+
+
 
                     var nodeType = function (n) {
                         if (n.children) {
@@ -331,7 +342,6 @@ angular.module('kingFisherApp')
                             }
                             else {
                                 d3.select(this).classed("selected", true);
-                                scope.selected.push(d.name);
                             }
                         }
                     });
@@ -342,7 +352,7 @@ angular.module('kingFisherApp')
                     leafNode.append('svg:circle')
                         .attr("r", 4.5)
                         .attr('fill', function(d){
-                            return initColorScale(d.name)
+                            return clusters[d.name]
                         })
                         .attr('stroke', '#369')
                         .attr('stroke-width', '2px')
@@ -378,24 +388,21 @@ angular.module('kingFisherApp')
                             return d.name
                         });
                     return {tree: tree, vis: vis}
+                    scope.buildCluster();
+
                 };
 
 
                 scope.$watch('data', function (newVal) {
                     if (newVal !== undefined) {
-                        var newwickStr = newVal.replace("Newick:", "");
+                        console.log('this is newval', newVal)
+                        var newwickStr = newVal.newick.replace("Newick:", "");
                         var newick = Newick.parse(newwickStr);
-
-                        console.log(newwickStr)
-
-                        console.log(newick)
-
-                        d3.phylogram.build('#phylogenetic', newick, {
+                        d3.phylogram.build('#phylogenetic', newick, newVal.clusters, {
                             width: 300,
                             height: 320
                         });
 
-                        scope.buildCluster();
 
 
                     }

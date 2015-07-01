@@ -1,0 +1,21 @@
+{
+  "name": "kingfisherboot",
+  "version": "1.0.0",
+  "description": "Node dependencies",
+  "main": "karma.conf.js",
+  "dependencies": {
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.12.37",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-jasmine": "^0.3.5",
+    "karma-jasmine-html-reporter": "~0.1",
+
+    "require": "^2.4.18"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "karma start"
+  },
+  "author": "",
+  "license": "ISC"
+}

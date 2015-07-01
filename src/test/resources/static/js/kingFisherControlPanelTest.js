@@ -25,18 +25,9 @@ describe("kingFisherCtrl", function() {
      * Injecting template by downloading the template and putting it into $templateCache for use later
      * will replace it by Karma
      *  **/
-    beforeEach(inject(function($templateCache) {
-        var directiveTemplate = null;
-        var req = new XMLHttpRequest();
-        req.onload = function() {
-            directiveTemplate = this.responseText;
-        };
-        // Note that the relative path may be different from your unit test HTML file.
-        // Using `false` as the third parameter to open() makes the operation synchronous.
-        // Gentle reminder that boolean parameters are not the best API choice.
-        req.open("get", "src/components/controlPanel/kingFisherForm.html", false);
-        req.send();
-        $templateCache.put("js/kingfisherApp/components/controlPanel/kingFisherForm.html", directiveTemplate);
+    beforeEach(inject(function($templateCache, _$compile_, _$rootScope_) {
+        template = $templateCache.get('src/main/resources/static/js/kingfisherApp/directives/templates/kingFisherForm.html')
+        $templateCache.put("js/kingfisherApp/directives/templates/kingFisherForm.html", template);
     }));
 
     /**
@@ -44,9 +35,6 @@ describe("kingFisherCtrl", function() {
      *
      */
     beforeEach(inject(function(_$rootScope_,_$controller_, _$q_, _$compile_, $templateCache, _$httpBackend_){
-
-
-
 
         mock = ["Gene\tPretreatment\tC4D1\tC7D1",
             "SRSF2_p.P95H\t0.5\t0.68\t0.62",
@@ -58,33 +46,18 @@ describe("kingFisherCtrl", function() {
 
         mock = mock.join("\n");
 
-
         $httpBackend = _$httpBackend_;
-        $httpBackend.when('GET', 'js/kingfisherApp/components/controlPanel/example.tsv').respond(mock);
-
+        //$httpBackend.when('GET', 'js/kingfisherApp/components/controlPanel/example.tsv').respond(mock);
+        $httpBackend.whenPOST('/hclust', {data : expectedResults}).respond(200, '');
         $q = _$q_;
 
         // mock postData with $q
-        var mockKingFisherData = {
-            postData : function(data){
-
-                var output = data;
-
-                var deferred = $q.defer();
-                deferred.resolve(output);
-
-                return deferred.promise;
-            }
-        };
-
         $controller = _$controller_;
 
         // create new scope
         $scope = _$rootScope_.$new();
         // compile
         $compile = _$compile_;
-
-
 
         // load controller with the correct $scope and function
         $controller = $controller('kingFisherCtrl', {$scope: $scope, kingFisherData: mockKingFisherData});
@@ -93,7 +66,7 @@ describe("kingFisherCtrl", function() {
         template = $templateCache.get('js/kingfisherApp/components/controlPanel/kingFisherForm.html');
 
         // transform template from string to angular element
-        template =angular.element(template);
+        template = angular.element(template);
 
 
 

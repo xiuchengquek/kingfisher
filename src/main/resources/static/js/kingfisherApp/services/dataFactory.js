@@ -17,7 +17,7 @@ angular.module('kingFisherApp')
             var req = {
                 method : "POST",
                 url : "/hclust",
-                data : {vafMap : _vafMap, timePoint : _timePoint },
+                data :{ timePoint : _timePoint, vafMap : _vafMap },
                 header: {'Content-Type' : 'application/json'}
             };
             return $http(req)
