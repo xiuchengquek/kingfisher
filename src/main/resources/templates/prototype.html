@@ -28,7 +28,13 @@
     <link rel="stylesheet" type="text/css" href="/fonts/font-awesome/css/font-awesome.css"/>
 
     <script src="/js/kingfisherApp/js/d3/d3.min.js" charset="utf-8"></script>
+    <script src="/js/kingfisherApp/js/d3/d3.min.js" charset="utf-8"></script>
+
     <script src="/js/kingfisherApp/js/newick/src/newick.js"></script>
+
+    <script src="/js/kingfisherApp/js/lodash/lodash.min.js"></script>
+    <script src="/js/kingfisherApp/js/d3-tip/index.js"></script>
+
 
     <!-- Jquery -->
 
@@ -152,10 +158,47 @@
 
                     <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
                         <div class="panel-body">
-                            <div><lineplot data="lineplot"></lineplot></div>
-                            <phylogenetic id="phylogenetic" data="newick"></phylogenetic>
-                            <boxplot data="boxplot"></boxplot>
+
+                            <div class="row">
+
+                                <div class="col-md-12">
+                                    <h2> Summary Plots</h2>
+
+                                    <h3> Fish Bone : Proposed Clonal Evolution</h3>
+                                    <fishbone data="fishbone" ></fishbone></div></div>
+
+
+                            <div phylogenetic id="phylogenetic" data="newick" class="row">
+                                <div id="phyloplot" class="col-md-6">                                <h3> Hierarchical Clustering Information  </h3>
+                                </div>
+                                <div phylo-info id="phyloinfo" class="col-md-6 vcenter"></div>
+
+                            </div>
+
+
+                            <div class="row">
+
+
+                                <div class="col-md-6">
+                                    <h3>Mutation over time </h3>
+                                    <lineplot data="lineplot"></lineplot>
+                                </div>
+
+
+                                <div class="col-md-6">
+                                    <h3>Vaf Score Across Mutation </h3>
+
+                                    <boxplot data="boxplot"></boxplot></div>
+
+                            </div>
+
+
+
+
+                            <h3> Summary </h3>
                             <table data="table" class="table"></table>
+
+
                         </div>
                     </div>
                 </div>
@@ -242,6 +285,7 @@
 <script type="text/javascript" src="js/kingfisherApp/directives/lineplotDirective.js"></script>
 <script type="text/javascript" src="js/kingfisherApp/directives/phyloDirective.js"></script>
 <script type="text/javascript" src="js/kingfisherApp/directives/boxplotDirective.js"></script>
+<script type="text/javascript" src="js/kingfisherApp/directives/fishBoneDirective.js"></script>
 
 
 

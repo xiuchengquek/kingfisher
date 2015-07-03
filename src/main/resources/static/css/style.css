@@ -345,4 +345,21 @@ nav#footer p{
 	padding-top: 40px;
 
 }
+.node text { font: 12px sans-serif; }
 
+.link {
+	fill: none;
+	stroke: #ccc;
+	stroke-width: 2px;
+}
+
+.vcenter { transform : translateY(50%)}
+.domain {
+	fill: none;
+	stroke: grey;
+	stroke-width: 1px;
+}
+.panel-body {
+	padding-left: 10px;
+
+}

@@ -7,8 +7,13 @@ angular.module('kingFisherApp').factory('fishPlotFactory', function () {
             var currentMutation      = input.shift();
             obj[currentMutation.mut] = [];
             angular.forEach(input, function (value) {
-                if (currentMutation.score < value.score + 0.001) {
-                    obj[currentMutation.mut].push({mut: value.mut, mean: value.mean});
+               if (currentMutation.score < value.score) {
+                    obj[currentMutation.mut].push(value)
+                } else if ( currentMutation.score == value.score){
+                    // current mutation score is the same, make it 0.001 smallelr
+                    if (currentMutation.mut > value.mut){
+                        obj[currentMutation.mut].push(value)
+                    }
                 }
             });
             input.push(currentMutation);
@@ -74,30 +79,34 @@ angular.module('kingFisherApp').factory('fishPlotFactory', function () {
 
     }
 
-    fishPlotAlgo.assemblePath = function (paths) {
+   fishPlotAlgo.assemblePath = function (paths, clusters) {
+
         var parentChild = invertParentChild(paths);
         var leafNodes   = _.difference(Object.keys(paths), Object.keys(parentChild));
         var possiblePaths = [];
+
         angular.forEach(leafNodes, function (value) {
             var leafPath = paths[value];
-            leafPath.reverse();
-            leafPath.push({mut: value});
+            //leafPath.reverse();
+            leafPath.push({mut: value , cluster : clusters[value]});
             leafPath = leafPath.map(function (d, i, arr) {
-                var obj    = {};
-                obj.mut    = d.mut;
+                //var obj    = {};
+                //obj.mut    = d.mut;
                 var parent = arr[i - 1];
-                if (parent) { obj.parent = parent.mut }
-                return obj
+                if (parent) { d.parent = parent.mut }
+                d.cluster = clusters[d.mut]
+                return d
             });
             possiblePaths.push.apply(possiblePaths, leafPath);
         });
+
         var unique    = (_.uniq(possiblePaths, function (d) {
             return d.mut
         }));
+
+        unique = unique.map(function(d){return _.omit(d, 'score')});
         return tree(unique)
     };
-
-
     return fishPlotAlgo
 
 

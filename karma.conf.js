@@ -39,6 +39,11 @@ module.exports = function(config) {
     // list of files to exclude
     exclude: [
 
+      'src/test/resources/static/js/fishPlotTreeMakerTest.js'
+
+
+
+
 
 
 
