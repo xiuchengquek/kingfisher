@@ -4,6 +4,7 @@ angular.module(['kingFisherApp'])
             scope: {
                 data: "="
             },
+            templateUrl  : 'js/kingfisherApp/directives/templates/boxplot.html',
             link: function (scope, elem, attr) {
 
                 d3.box = function () {
@@ -240,9 +241,14 @@ angular.module(['kingFisherApp'])
                 }
 
                 function plotBoxPlot(data, order) {
+
+                    d3.select("boxplotPlot").select("svg").remove();
+
+
+
                     var margin = {top: 20, right: 20, bottom: 180, left: 50},
                         height = 500 - margin.top - margin.bottom,
-                        width = 320 - margin.left - margin.right;
+                        width = 550 - margin.left - margin.right;
 
                     var maxVaf = d3.max(data, function (d) {
                         return d3.max(d.y)
@@ -301,7 +307,7 @@ angular.module(['kingFisherApp'])
                         .xDomain(x);
 
 
-                    var svg = d3.select("boxplot").append("svg")
+                    var svg = d3.select("boxplotPlot").append("svg")
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
                         .attr("class", "box")
@@ -331,6 +337,7 @@ angular.module(['kingFisherApp'])
                         .call(chart.width(x.rangeBand()));
 
                     // add a title
+                    /**
                     svg.append("text")
                         .attr("x", (width / 2))
                         .attr("y", 0 + (margin.top / 2))
@@ -339,10 +346,14 @@ angular.module(['kingFisherApp'])
                         //.style("text-decoration", "underline")
                         .text("Mutation Profile");
 
+                     **/
+
                     // draw y axis
                     svg.append("g")
                         .attr("class", "y axis")
                         .call(yAxis)
+                        .style('stroke-width', '1px')
+
                         .append("text") // and text1
                         .attr("transform", "rotate(-90)")
                         .attr("y", 6)

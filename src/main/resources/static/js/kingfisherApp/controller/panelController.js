@@ -31,9 +31,9 @@ angular.module('kingFisherApp')
                 $scope.boxplot = plotParsers.parseBox(vafData, clusters);
                 $scope.newick = { newick : newick , clusters : nodeProfiles};
                 $scope.table = plotParsers.parseTable(vafData, clusters );
-                $scope.fishBone = plotParsers.parseTree(vafData, clusters);
 
-
+               console.log(clusters, vafData);
+                $scope.fishbone = plotParsers.parseTree(vafData, clusters, timePoint,nodeProfiles);
             })
         };
 
@@ -48,7 +48,7 @@ angular.module('kingFisherApp')
             $scope.newick.clusters = clusters;
             $scope.lineplot = plotParsers.parseLine(vafData, timePoint, nodeProfiles);
             $scope.table = plotParsers.parseTable(vafData, clusters );
-
+            $scope.fishbone = plotParsers.parseTree(vafData, clusters, timePoint, nodeProfiles);
             $scope.$digest();
         });
 

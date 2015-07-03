@@ -15,14 +15,14 @@ angular.module('kingFisherApp')
             link : function(scope, element, attr){
 
                 function plotline(data){
-                    var margin = {top: 20, right: 20, bottom: 50, left: 50},
-                        height = 320 - margin.top - margin.bottom,
-                        width = 320 -margin.left - margin.right;
+                    console.log(data.length)
 
-                    //var autoWidth = new d3Helper.autoWidth(element, height, margin, minWidth);
+                    d3.select("lineplot").select('svg').remove()
 
 
-                    //autoWidth.reWidth();
+                    var margin = {top: 20, right: 20, bottom: 180, left: 50},
+                        height = 500 - margin.top - margin.bottom,
+                        width = 550 -margin.left - margin.right;
 
                     var yMax = d3.max(data, function(d) {return d3.max(d.values, function(v) {return v.y}) ;});
                     var yMin = d3.min(data, function(d) {return d3.min(d.values, function(v) {return v.y}) ;});
@@ -35,7 +35,7 @@ angular.module('kingFisherApp')
 
                     var y = d3.scale.linear()
                         .domain([0, yMax ])
-                        .range([height, 0]);
+                        .range([height + margin.top, 0 + margin.top]);
 
                     var xAxis = d3.svg.axis()
                         .scale(x)
@@ -50,17 +50,66 @@ angular.module('kingFisherApp')
                         .x(function(d){ return x(d.x) })
                         .y(function(d){ return y(d.y)});
 
+
+
                     var svg = d3.select("lineplot").append("svg")
                         .attr("width", width + margin.left +  margin.right)
-                        .attr("height", height + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
                     // set xAxis
+
+                    var mutations = svg.selectAll(".series")
+                        .data(data)
+                        .enter().append("g")
+                        .attr("class", "series");
+
+
+
+                    mutations.append("path")
+                        .attr("class", "line")
+                        .attr("d", function(d) { return line(d.values)})
+                        .attr("stroke", function(d) { return  d.color})
+                        .attr("fill", "none")
+                        .append('svg:title')
+                        .text(function(d) {return d.series})
+
+
                     svg.append("g")
                         .attr("class", "x axis")
-                        .attr("transform", "translate(0," + height + ")")
-                        .call(xAxis);
+                        .attr("transform", "translate(0," + (height + margin.top) + ")")
+                        .call(xAxis)
+                        .selectAll('text')
+                        .style("text-anchor", "end")
+                        .style("font-size", "10px")
+                        .attr("dy", "0.5em")
+                        .attr("dx", "-1em")
+                        .attr("transform", function(d) {
+                            return "rotate(-65)";
+                        });
+
+                    svg.selectAll(".labels")
+                        .data(data)
+                        .enter().append("g")
+                        .attr("transform", "translate(0," + ( height - (data.length * 16 )  + ")"))
+                        .append("text")
+                        .attr("x", 3)
+                        .attr("y", function(d, i) { return i * 1.5  + "em" })
+                        .text(function(d) { return d.series; })
+                        .attr("stroke", function(d){ return d.color})
+                        .attr("fill", function(d){ return d.color})
+/**
+                    svg.append("text")
+                        .attr("x", (width / 2))
+                        .attr("y", 0 + (margin.top / 2))
+                        .attr("text-anchor", "middle")
+                        .style("font-size", "18px")
+                        //.style("text-decoration", "underline")
+                        .text("VAF Over Time");
+**/
+
+
 
                     // set yAxis
                     svg.append("g")
@@ -73,25 +122,7 @@ angular.module('kingFisherApp')
                         .style("text-anchor", "end")
                         .text("VAF Score");
 
-                    var mutations = svg.selectAll(".series")
-                        .data(data)
-                        .enter().append("g")
-                        .attr("class", "series");
 
-
-                    mutations.append("path")
-                        .attr("class", "line")
-                        .attr("d", function(d) { return line(d.values)})
-                        .attr("stroke", function(d) { return  d.color})
-                        .attr("fill", "none")
-
-                    mutations.append("text")
-                        .datum(function(d){ return { series : d.series, color : d.color}})
-                        .attr("x", 3)
-                        .attr("y", function(d, i) { return i + "em" })
-                        .text(function(d) { return d.series; })
-                        .attr("stroke", function(d){ return d.color})
-                        .attr("fill", function(d){ return d.color});
 
                 }
 

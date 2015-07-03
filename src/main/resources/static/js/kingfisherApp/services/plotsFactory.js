@@ -68,7 +68,7 @@ angular.module('kingFisherApp')
         var findMean = function(arr) {
             var sum = arr.reduce(function(a,b){return parseFloat(a) + parseFloat(b) });
             var ave = sum/arr.length;
-            return ave
+            return Number(ave.toFixed(2));
         };
         return {
             parseBox: function (vafMap, clusters) {
@@ -148,22 +148,21 @@ angular.module('kingFisherApp')
                     merged = membersScore.concat.apply(merged, tMemberScore);
                     var mean = findMean(merged);
 
+
                     angular.forEach(members, function(value, index){
 
                         this.push({
-                            mut : value , cluster : mutations, cluster_mean :  mean.toFixed(2) }
+                            mut : value , cluster : mutations, cluster_mean :  mean }
                         )
                     },table)
                 });
                 return table;
             },
 
-            parseTree: function (vafMap, clusters, timePoint) {
+            parseTree: function (vafMap, clusters, timePoint, nodeProfile) {
 
-                var table     = [];
+                var treeData     = {};
                 var mutations = Object.keys(clusters);
-
-
 
                 angular.forEach(mutations, function (mutations, index) {
                     // get the member
@@ -188,16 +187,23 @@ angular.module('kingFisherApp')
                     merged = membersScore.concat.apply(merged, tMemberScore);
                     var mean   = findMean(merged);
 
-                    angular.forEach(members, function (value, index) {
 
-                        this.push({
-                                mut: value, cluster: mutations, cluster_mean: mean.toFixed(2)
-                            }
-                        )
-                    }, table)
-                });
+                    angular.forEach(timePoint, function(time, index){
 
-                return table;
+                        treeData[time] = treeData[time] || [];
+                        angular.forEach(members, function (value) {
+                                this.push({
+                                    mut: value, mean : mean, score : tMemberScore[index]
+                                })
+                        }, treeData[time])
+
+                    })
+            });
+
+
+
+
+                return {value : treeData, nodeProfile : nodeProfile}
             },
 
 

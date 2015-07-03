@@ -3,14 +3,10 @@
 angular.module('kingFisherApp')
     .directive('phylogenetic', function () {
         return {
-            restrict: 'E',
+            restrict: 'A',
             scope: {
                 data: '='
             },
-            template: '<button ng-click="clearSelection()">clear</button>' +
-                      '<button ng-click="assignCluster()">Add Cluster</button>' +
-                      '<input color-picker type="color" name="color" />',
-
             controller: function ($scope, mutationClusters) {
                 $scope.selected = [];
 
@@ -19,21 +15,26 @@ angular.module('kingFisherApp')
                     d3.selectAll('g.leaf.node').classed('selected', false);
                 };
 
-                $scope.assignCluster = function () {
+                $scope.$on('assignCluster', function(selectedColor){
 
-
+                    console.log('called')
 
                     d3.selectAll('g.leaf.node.selected').each(function(d, i){
-                        d3.select(this).select('circle').attr('fill', $scope.selectedColor)
+                        d3.select(this).select('circle').attr('fill', selectedColor)
+                    });
 
-                    })
+                    $scope.clearSelection();
+                    $scope.buildCluster();
 
 
+                })
 
 
-                    //angular.forEach($scope.selected, function (value, key) {
-                      //  d3.select("circle[name='" + value + "']").attr('fill', $scope.selectedColor)
-                    //});
+                this.assignCluster = function (selectedColor) {
+                    d3.selectAll('g.leaf.node.selected').each(function(d, i){
+                        d3.select(this).select('circle').attr('fill', selectedColor)
+                    });
+
                     $scope.clearSelection();
                     $scope.buildCluster();
                 };
@@ -163,33 +164,9 @@ angular.module('kingFisherApp')
                     return diagonal;
                 };
 
-                d3.phylogram.radialRightAngleDiagonal = function () {
-                    return d3.phylogram.rightAngleDiagonal()
-                        .path(function (pathData) {
-                            var src = pathData[0],
-                                mid = pathData[1],
-                                dst = pathData[2],
-                                radius = Math.sqrt(src[0] * src[0] + src[1] * src[1]),
-                                srcAngle = d3.phylogram.coordinateToAngle(src, radius),
-                                midAngle = d3.phylogram.coordinateToAngle(mid, radius),
-                                clockwise = Math.abs(midAngle - srcAngle) > Math.PI ? midAngle <= srcAngle : midAngle > srcAngle,
-                                rotation = 0,
-                                largeArc = 0,
-                                sweep = clockwise ? 0 : 1;
-                            return 'M' + src + ' ' +
-                                "A" + [radius, radius] + ' ' + rotation + ' ' + largeArc + ',' + sweep + ' ' + mid +
-                                'L' + dst;
-                        })
-                        .projection(function (d) {
-                            var r = d.y, a = (d.x - 90) / 180 * Math.PI;
-                            return [r * Math.cos(a), r * Math.sin(a)];
-                        })
-                };
 
                 // Convert XY and radius to angle of a circle centered at 0,0
                 d3.phylogram.coordinateToAngle = function (coord, radius) {
-
-
                     var wholeAngle = 2 * Math.PI,
                         quarterAngle = wholeAngle / 4;
 
@@ -265,7 +242,7 @@ angular.module('kingFisherApp')
                             });
                     var diagonal = options.diagonal || d3.phylogram.rightAngleDiagonal();
                     var vis = options.vis || d3.select(selector).append("svg:svg")
-                            .attr("width", w + 150)
+                            .attr("width", w)
                             .attr("height", h)
                             .append("svg:g")
                             .attr("transform", "translate(20,20)");
@@ -273,7 +250,7 @@ angular.module('kingFisherApp')
                     //.attr("transform", "rotate(90,  300, 320)")
                     var nodes = tree(nodes);
 
-                    var yscale = scaleBranchLengths(nodes, w);
+                    var yscale = scaleBranchLengths(nodes, w -150);
 
                     if (!options.skipTicks) {
                         vis.selectAll('line')
@@ -299,9 +276,6 @@ angular.module('kingFisherApp')
                                 return Math.round(d * 100) / 100;
                             });
                     }
-
-
-
 
                     var nodeType = function (n) {
                         if (n.children) {
@@ -388,8 +362,6 @@ angular.module('kingFisherApp')
                             return d.name
                         });
                     return {tree: tree, vis: vis}
-                    scope.buildCluster();
-
                 };
 
 
@@ -398,39 +370,47 @@ angular.module('kingFisherApp')
                         console.log('this is newval', newVal)
                         var newwickStr = newVal.newick.replace("Newick:", "");
                         var newick = Newick.parse(newwickStr);
-                        d3.phylogram.build('#phylogenetic', newick, newVal.clusters, {
-                            width: 300,
+                        d3.phylogram.build('#phyloplot', newick, newVal.clusters, {
+                            width: 500,
                             height: 320
                         });
 
 
 
                     }
+
                 })
 
             }
         }
     })
 
-    .directive('colorPicker', function () {
+
+    .directive('phyloInfo', function () {
         return {
+            scope : true,
             restrict: 'A',
             require: '^phylogenetic',
-            link: function (scope, element, attr) {
+            templateUrl : 'js/kingfisherApp/directives/templates/phylo.html',
+
+
+            link: function (scope, element, attr, phyloCtrl) {
+
+
+                var inputTag = angular.element(element).find('input')
 
                 function getSelectedColor() {
-                    var input = element.spectrum("get");
-                    scope.selectedColor = input.toHexString();
-                    scope.assignCluster();
+                    var input = inputTag.spectrum("get");
+                    var selectedColor = input.toHexString();
+            //        scope.$emit('assignCluster', scope.selectedColor)
+                    phyloCtrl.assignCluster(selectedColor);
                 }
-
-                element.spectrum({
+                inputTag.spectrum({
                     showPaletteOnly: true,
                     togglePaletteOnly: true,
                     togglePaletteMoreText: 'more',
                     togglePaletteLessText: 'less',
                     hideAfterPaletteSelect: true,
-
                     color: 'blanchedalmond',
                     change: getSelectedColor,
                     palette: [
