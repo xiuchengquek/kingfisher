@@ -1,25 +1,21 @@
 <form novalidate class="data-form">
     <div class="form-group" class="col-md-6">
-        <label class=col-md-1" for="title">Title</label>
-        <input class=col-md-5" id="title" name="title" class="form-control"
-               type="text" ng-model="data.title" value="title"/><br/>
-
-
-        <span ng-click="loadSample()"> load sample data </span>
+        <label class for="title">Title</label>
+        <div class="input-group">
+            <input  id="title" name="title" class="form-control"
+                    type="text" ng-model="data.title" value="title"/>
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button"  ng-click="loadSample()"> Load Sample Data </button></span>
+        </div>
     </div>
-    <div class="panel-group" id="inputAccordion" role="tablist"
-
-
-
-
-         aria-multiselectable="true">
+    <div class="panel-group" id="inputAccordion" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default" role="tab" id="mafPanel">
 
             <h4 class="panel-title">
                 <a data-toggle="collapse" data-parent="#inputAccordion"
                    href="#collapseMaf " aria-expanded="true"
                    aria-controls="collapseMaf">
-                    Step #1 : Please Enter MAF
+                    Please Enter MAF
                 </a>
             </h4>
         </div>
@@ -33,7 +29,7 @@
             </div>
         </div>
 
-
+<!---
         <div class="panel panel-default" role="tab" id="cnvPanel"
              aria-multiselectable="true">
             <h4 class="panel-title">
@@ -54,15 +50,14 @@
             </div>
         </div>
 
-
+---->
         <div class="panel panel-default" role="tab" id="clincalPanel"
              aria-multiselectable="true">
             <h4 class="panel-title">
                 <a data-toggle="collapse" data-parent="#inputAccordion"
                    href="#collapseclincalPanel"
                    aria-expanded="true" aria-controls="collapseclincalPanel">
-
-                    Step #3 : Input Clinical Data
+                    Input Clinical Data
                 </a>
             </h4>
         </div>

@@ -25,7 +25,7 @@
     "handsontable"  : "~0.15.0",
     "numeral" : "~1.5.3",
     "angular-smart-table" : "~2.1.0",
-    "lodash" : "~3.1.0",
+    "lodash" : "~3.10.0",
     "isotope" :  "~1.5.25",
     "SmoothScroll" : "https://gist.github.com/6477177.git",
     "bootstrap" : "~3.3.2",

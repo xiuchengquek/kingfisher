@@ -6,7 +6,7 @@ describe("dataFactoryTest", function () {
     beforeEach(module("kingFisherApp"));
 
     describe("Testing dataLoader", function(){
-        var mergeMafClincial;
+        var mergeMiniMafClincial;
         var clinicalParser;
         var mafParser;
         var mockMaf;
@@ -24,25 +24,22 @@ describe("dataFactoryTest", function () {
 
 
             mockMaf = [];
-            mockMaf.push("Hugo_Symbol\tEntrez_Gene_Id\t" +
-                "NCBI_Build\tChromosome\tStart_Position\t" +
-                "End_Position\tStrand\tReference_Allele\t" +
-                "Tumor_Seq_Allele1\tTumor_Sample_Barcode\tScore");
+            mockMaf.push("Hugo_Symbol\tTumor_Sample_Barcode\tAmino_Acid_Change\tt_alt_count\tt_ref_count");
 
 
-            var mutationA_1 = ["TP53", "7157", "GRCh38.p2", "chr17",
-                "100", "101", "+", "A", "T", "SampleA-1", "0.1"];
+            var mutationA_1 = ["TP53","SampleA-1","P100G","10",'90'];
 
             var mutationA_2 = angular.copy(mutationA_1);
-            mutationA_2[9] = "SampleA-2";
-            mutationA_2[10] = "0.2";
+            mutationA_2[1] = "SampleA-2";
+            mutationA_2[3] = "20";
+            mutationA_2[4] = "80";
 
-            var mutationB_1 = ["AKT1", "7121", "GRCh38.p2", "chr11",
-                "700", "701", "+", "A", "T", "SampleA-1", "0.4" ];
+
+            var mutationB_1 = ["AKT1","SampleA-1", "P100A","40","60"];
 
             var mutationB_2 = angular.copy(mutationB_1);
-            mutationB_2[9] = "SampleA-2";
-            mutationB_2[10] = "0.6";
+            mutationB_2[1] = "SampleA-2";
+            mutationB_2[3] = "90";
 
             mutationA_1 = mutationA_1.join('\t');
             mutationA_2 = mutationA_2.join('\t');
@@ -65,8 +62,8 @@ describe("dataFactoryTest", function () {
             mockClinical.push("SampleA-2\t2\tTreatmentA");
 
             expectedResults = { timePoint : ["SampleA-1", "SampleA-2"],
-                vafMap : { "TP53_g.[100A>T]" : [0.1,0.2],
-                    "AKT1_g.[700A>T]" : [0.4, 0.6] }
+                vafMap : { "TP53_p.P100G" : [0.1,0.2],
+                    "AKT1_p.P100A" : [0.4, 0.6] }
             };
 
             contentHeader = { 'Content-Type' : 'application/json'}
