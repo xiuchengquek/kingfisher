@@ -33,7 +33,7 @@ angular.module('kingFisherApp')
                 var tree = plotParsers.parseTree(vafData, clusters, timePoint, nodeProfiles);
                 var fishBones = fishPlotFactory.constructTree(tree);
                 $scope.lineplot = plotParsers.parseGoogleLine(vafData, timePoint, nodeProfiles);
-                $scope.boxplot = plotParsers.parseGoogleBox(vafData, nodeProfiles);
+               $scope.boxplot = plotParsers.parseBox(vafData, clusters);
                 $scope.newick = { newick : newick , clusters : nodeProfiles};
                 $scope.table = plotParsers.parseTable(vafData, clusters );
                $scope.fishbone = fishBones;
@@ -52,7 +52,7 @@ angular.module('kingFisherApp')
             var fishBones = fishPlotFactory.constructTree(tree);
 
 
-            $scope.boxplot = plotParsers.parseGoogleBox(vafData, nodeProfiles);
+            $scope.boxplot = plotParsers.parseBox(vafData, clusters);
             $scope.newick.clusters = clusters, nodeProfiles;
             $scope.lineplot = plotParsers.parseGoogleLine(vafData, timePoint, nodeProfiles);
             console.log('after line', clusters , nodeProfiles);

@@ -354,7 +354,9 @@ nav#footer p{
 }
 
 .vcenter { transform : translateY(20%)}
-.domain {
+
+
+.domain path {
 	fill: none;
 	stroke: grey;
 	stroke-width: 1px;
@@ -363,3 +365,15 @@ nav#footer p{
 	padding-left: 10px;
 
 }
+
+.axis path {
+	display: none;
+}
+
+.axis line {
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+
+
+}
+

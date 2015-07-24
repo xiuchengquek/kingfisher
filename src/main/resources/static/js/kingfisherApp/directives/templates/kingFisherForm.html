@@ -1,11 +1,10 @@
 <form novalidate class="data-form">
     <div class="form-group" class="col-md-6">
         <label class for="title">Title</label>
-        <div class="input-group">
+        <div>
             <input  id="title" name="title" class="form-control"
                     type="text" ng-model="data.title" value="title"/>
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="button"  ng-click="loadSample()"> Load Sample Data </button></span>
+
         </div>
     </div>
     <div class="panel-group" id="inputAccordion" role="tablist" aria-multiselectable="true">
@@ -78,9 +77,9 @@
 
 
         <div class="form-group">
-
-            <button ng-click="update()"> Catch!</button>
-
+            <div class="btb-group"> </div>
+                <button class="btn btn-default" type="button"  ng-click="loadSample()"> Load Sample Data </button></span>
+                <button class="btn btn-default" ng-click="update()"> Catch!</button>
         </div>
     </div>
 </form>
