@@ -8,7 +8,7 @@
 
 angular.module('kingFisherApp')
     .factory('dataLoader',
-    function(mafParser, clinicalParser, mergeMafClinical, $q, $http){
+    function(minimalMafParser, clinicalParser, mergeMiniMafClinical, $q, $http){
         var _timePoint;
         var _vafMap;
         var sharedData = {};
@@ -42,14 +42,14 @@ angular.module('kingFisherApp')
 
         sharedData.loadAndValidate = function(maf, clinical) {
             var results = {};
-            var mafObj = new mafParser();
+            var mafObj = new minimalMafParser();
             mafObj.parseData(maf);
 
             var clinicalObj = new clinicalParser();
             clinicalObj.parseData(clinical);
 
             if (clinicalObj.isOk() && mafObj.isOk()) {
-                results = mergeMafClinical(clinicalObj.dataValues, mafObj.dataValues)
+                results = mergeMiniMafClinical(clinicalObj.dataValues, mafObj.dataValues)
             }
             else if (clinicalObj.isOk()) {
                 // statement to tell mafObj is not okay

@@ -173,6 +173,7 @@ angular.module('kingFisherApp').factory('mafParser', function(generalParser){
     //_complusoryMafFields.push("BAM_File");
     //_complusoryMafFields.push("Tumor_Sample_UUID");
     //_complusoryMafFields.push("Matched_Norm_Sample_UUID");
+
     mafParser.prototype = new generalParser();
     mafParser.prototype.constructor= mafParser;
 
@@ -182,6 +183,115 @@ angular.module('kingFisherApp').factory('mafParser', function(generalParser){
     }
     return mafParser
 });
+
+
+angular.module('kingFisherApp').factory('minimalMafParser', function(generalParser){
+
+    var _complusoryMafFields = [];
+    _complusoryMafFields.push("Hugo_Symbol");
+    _complusoryMafFields.push("Tumor_Sample_Barcode");
+    _complusoryMafFields.push("Amino_Acid_Change");
+    _complusoryMafFields.push("t_alt_count");
+    _complusoryMafFields.push("t_ref_count");
+    minimalMafParser.prototype = new generalParser();
+    minimalMafParser.prototype.constructor = minimalMafParser;
+
+    function minimalMafParser(){
+        this.dataType = "Maf";
+        this.requiredHeader = _complusoryMafFields;
+    }
+    return minimalMafParser
+
+});
+
+
+
+
+angular.module('kingFisherApp').factory('mergeMiniMafClinical', function(){
+
+    var groupMut;
+    var mergeMiniMafClinical;
+    var arrangeTimePoint;
+
+    /**
+     * function to check the data type for timepoint field in clincal data and return the apporiate function
+     * to handle the different value type - date, float or character
+     *
+     * @param value time point value
+     * @returns {*}
+     */
+    function checkTimeType(value){
+
+        var isDate = function(val) {
+            return ( (new Date(val) !== "Invalid Date" && !isNaN(new Date(val)) ));
+        };
+
+        var isFloat =  function(val) {
+            return ( !isNaN(parseFloat(val)) )
+        };
+
+        if (value.every(isDate)){
+            return function(value) {
+                return new Date(value);
+            }
+        } else if (value.every(isFloat)) {
+            return  function(value){
+                return parseFloat(value)
+            }
+        } else {
+            return function(value) {
+                return value.toLowerCase()
+            }
+        }
+    }
+
+    groupMut = function (mafData) {
+        var mutation = {};
+
+        angular.forEach(mafData, function (value) {
+            var sampleCode = value.Tumor_Sample_Barcode;
+            var hugoSymbol = value.Hugo_Symbol;
+            var score = Number(value.t_alt_count) / ( Number(value.t_alt_count) +  Number(value.t_ref_count));
+            var mutationName = hugoSymbol + '_p.' + value.Amino_Acid_Change;
+            mutation[mutationName] = mutation[mutationName] || {};
+            mutation[mutationName][sampleCode] = score;
+        });
+        return mutation
+    };
+
+
+    arrangeTimePoint = function (clinicalData) {
+        var timeType;
+        var biopsyTimeList = clinicalData.map(function (obj) {
+            return obj.Biopsy_Time
+        });
+
+        timeType = checkTimeType(biopsyTimeList);
+        clinicalData = clinicalData.sort(function (a, b) {
+            return timeType(a.Biopsy_Time) > timeType(b.Biopsy_Time)
+        });
+        return clinicalData.map(function (x) { return x.Tumor_Sample_Barcode });
+    };
+
+    mergeMiniMafClinical = function (clinicalData, mafData) {
+        var vafMap = {};
+        var timePoint = arrangeTimePoint(clinicalData);
+        var groupMutations = groupMut(mafData);
+
+        angular.forEach(groupMutations, function(value, mutName) {
+            vafMap[mutName] = vafMap[mutName] || [];
+            angular.forEach(timePoint, function(sample) {
+                var score = value[sample] || 0;
+                vafMap[mutName].push(score);
+            });
+        });
+        return {timePoint : timePoint, vafMap : vafMap}
+    };
+    return mergeMiniMafClinical;
+});
+
+
+
 
 angular.module('kingFisherApp').factory('clinicalParser', function(generalParser){
 

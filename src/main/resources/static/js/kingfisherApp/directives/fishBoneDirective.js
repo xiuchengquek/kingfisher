@@ -5,13 +5,17 @@
  * Created by xiuchengquek on 14/06/15.
  */
 angular.module('kingFisherApp')
-    .directive('fishbone', function(fishPlotFactory){
+    .directive('fishbone', function(){
         return {
             scope : {
                 'data' : '='
             },
 
             templateUrl :"js/kingfisherApp/directives/templates/fishboneplot.html",
+
+
+
+
             link : function(scope, elem, attr){
                 function plot(source) {
                     d3.select("fishbone").select("svg").remove();
@@ -66,7 +70,7 @@ angular.module('kingFisherApp')
                     nodeEnter.append("circle")
                         .attr("r", 10)
                         .attr('fill', function(d){
-                            return d.cluster
+                            return d.cluster.cluster
                         })
 
                     nodeEnter.append("text")
@@ -77,7 +81,7 @@ angular.module('kingFisherApp')
                             return d.children || d._children ? "end" : "start"; })
                         .text(function(d) { return d.mut; })
                         .attr('fill', function(d){
-                                return d.cluster
+                                return d.cluster.cluster
 
                         })
                         .attr("transform", function(d) {
@@ -100,10 +104,7 @@ angular.module('kingFisherApp')
 
                 scope.$watch('data', function(newVal){
                     if (newVal !== undefined){
-                        console.log(newVal)
-                        var fishBone = fishPlotFactory.findPaths(newVal.value);
-                        var treeSource = fishPlotFactory.assemblePath(fishBone, newVal.nodeProfile);
-                        plot(treeSource)
+                        plot(newVal)
 
                     }
 

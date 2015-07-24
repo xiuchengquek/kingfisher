@@ -12,8 +12,56 @@ angular.module('kingFisherApp')
 
 
 
+
+
+
+
             link : function(scope, element, attr){
 
+
+
+
+                function plotline(source) {
+                    var data = google.visualization.arrayToDataTable(source.data);
+
+                    var options = {
+
+                        legend: { position: 'none' },
+                        width: 550,
+                        height : 500,
+                        chartArea: {top:20, left:100,'width': '80%', 'height': '60%'},
+                        hAxis : {
+                            title : "Timepoint",
+                            titleTextStyle : {
+                                fontSize : 18
+                            },
+
+                            slantedText:true,
+                            slantedTextAngle:60,
+                            textStyle : {
+                                fontSize : 18
+                            }
+                        },
+                        vAxis : { title : "Variant Allelic Frequency" ,
+                                    titleTextStyle : {
+                                        fontSize : 18
+                                    },
+
+                            textStyle : {
+                                fontSize : 18
+                            }},
+
+                        pointSize: 12,
+                        pointShape: 'square',
+                    colors: source.colors
+
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('linechart'));
+
+                    chart.draw(data, options);
+                }
+/**
                 function plotline(data){
                     console.log(data.length)
 
@@ -110,7 +158,7 @@ angular.module('kingFisherApp')
 **/
 
 
-
+/**
                     // set yAxis
                     svg.append("g")
                         .attr("class", "y axis")
@@ -125,6 +173,7 @@ angular.module('kingFisherApp')
 
 
                 }
+            **/
 
                 scope.$watch('data', function(newVal, oldVal){
                     if (newVal !== undefined) {

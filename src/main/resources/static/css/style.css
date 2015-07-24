@@ -353,7 +353,7 @@ nav#footer p{
 	stroke-width: 2px;
 }
 
-.vcenter { transform : translateY(50%)}
+.vcenter { transform : translateY(20%)}
 .domain {
 	fill: none;
 	stroke: grey;
