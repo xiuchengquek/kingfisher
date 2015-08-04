@@ -346,29 +346,11 @@ angular.module(['kingFisherApp'])
                         .enter().append("g")
                         .attr('transform', 'translate(0,' + margin.top + ')')
                         .call(chart.width(x.rangeBand()));
-
-                    // add a title
-                    /**
-                    svg.append("text")
-                        .attr("x", (width / 2))
-                        .attr("y", 0 + (margin.top / 2))
-                        .attr("text-anchor", "middle")
-                        .style("font-size", "18px")
-                        //.style("text-decoration", "underline")
-                        .text("Mutation Profile");
-
-                     **/
-
-
                     // draw x axis
                     var gx = svg.append("g")
                         .attr("class", "x axis")
                         .attr("transform", "translate(0," + (height + margin.top ) + ")")
                         .call(xAxis)
-
-
-
-
 
                         gx.selectAll("text")
                         // text label for the x axis
@@ -377,15 +359,12 @@ angular.module(['kingFisherApp'])
                         .attr('id', function (d, i) {
                             return xValues[i];
                         })
-
                         .style("text-anchor", "end")
                         .attr("transform", "rotate(-65)")
                         .style("font-size", "18px");
 
-
                     gx.selectAll('line').filter(function(d) { return (d)}).
                         style('stroke', 'none')
-
 
                     function iqr(k) {
                         return function (d, i) {
@@ -403,7 +382,7 @@ angular.module(['kingFisherApp'])
 
                 scope.$watch('data', function (newVal, oldVal) {
                     if (newVal !== undefined) {
-                        console.log('this is the newval' , newVal)
+                        console.log('this is the newval' , newVal);
                         plotBoxPlot(newVal);
 
                     }
@@ -412,4 +391,4 @@ angular.module(['kingFisherApp'])
 
             }
         }
-    })
+    });

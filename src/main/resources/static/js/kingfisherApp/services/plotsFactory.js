@@ -15,7 +15,7 @@ angular.module('kingFisherApp')
         mutationClusters.initClusters = function(vafMap){
             var deferred = $q.defer();
 
-            var color = d3.scale.category20().domain(
+            var color = d3.scale.category10().domain(
                 Object.keys(vafMap)
             );
             var _clusters = {};
@@ -52,6 +52,8 @@ angular.module('kingFisherApp')
             clusters = _clusters;
             $rootScope.$broadcast('clusterChanged')
         };
+
+
 
         mutationClusters.getClusters = function () {
             return clusters
@@ -114,6 +116,38 @@ angular.module('kingFisherApp')
 
             return boxplot;
         };
+
+
+        function parseNewTree (vafMap, clusters) {
+            var treeData = [];
+
+            // get average of each cluster
+            angular.forEach(clusters, function(members, key){
+                // this will return an array of array
+                var membersScore = members.map(function (v) {
+                    return vafMap[v]
+                });
+                // transpose array
+                var tMemberScore = membersScore[0].map(function (col, i) {
+                    return membersScore.map(function (row) {
+                        return row[i]
+                    })
+                });
+
+                // find mean for each timepoint
+                tMemberScore = tMemberScore.map(findMean);
+                // now remerge
+
+                var merged = [];
+                merged     = membersScore.concat.apply(merged, tMemberScore);
+                treeData.push({ 'cluster' : key, 'members' : members, 'score' :  merged })
+            });
+
+
+            return treeData
+
+
+        }
 
         function parseTree (vafMap, clusters, timePoint, nodeProfile) {
 
@@ -326,6 +360,7 @@ angular.module('kingFisherApp')
             // ({x: clusterName, y: merged, members: members, groupCol: mutations, mean : mean})
             parseTable: parseTable,
             parseLine: parseLine,
+            parseNewTree : parseNewTree,
         };
         // table is an array of mutations profile for each cluster.
     });

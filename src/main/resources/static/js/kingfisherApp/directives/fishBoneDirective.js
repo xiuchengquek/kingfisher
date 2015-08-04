@@ -19,8 +19,8 @@ angular.module('kingFisherApp')
             link : function(scope, elem, attr){
                 function plot(source) {
                     d3.select("fishbone").select("svg").remove();
-                    var margin = {top: 40, right: 120, bottom: 20, left: 120},
-                        width = 960 - margin.right - margin.left,
+                    var margin = {top: 40, right: 120, bottom: 20, left: 20},
+                        width = 560 - margin.right - margin.left,
                         height = 400 - margin.top - margin.bottom;
 
                     var i = 0;
@@ -74,20 +74,15 @@ angular.module('kingFisherApp')
                         })
 
                     nodeEnter.append("text")
-                        .attr("x", function(d) {
-                            return d.children || d._children ? -13 : 13; })
-                        .attr("dy", ".35em")
-                        .attr("text-anchor", function(d) {
-                            return d.children || d._children ? "end" : "start"; })
+                        .attr("dy", "30px")
+                        .attr("text-anchor", "start")
                         .text(function(d) { return d.mut; })
+
+
                         .attr('fill', function(d){
                                 return d.cluster.cluster
 
                         })
-                        .attr("transform", function(d) {
-                            return "rotate(-65)"
-                        });
-
 
 
                     // Declare the links

@@ -1,24 +1,18 @@
+<h3> Figure 3 : Hierarchical Clustering Information  </h3>
 
-
-<div> <h4>Edit Clustering Information  </h4>
-
-<p> The phylogram on the left shows the hierarchical clustering of your mutations. By default, the number of clusters
-selected is equivalent to the number mutations.</p>
-
-
-    <p>Variant allele fractions that trend together over time indicate likely membership within the same clone;
-
-        Mutations in the same clusters will appear sequentially after one another and share the same VAF score which is the mean of the cluster
-        For more information on how clustering will affect the fish plot, please click here
-    </p>
-
-    <p>To do your clustering, please group your mutations by clicking on the nodes assigning
-a color using the color palette below.  </p>
-
-
-
-
-
-<input color-picker/>
-
+<div>
+    To create your own clusters, please select one or more mutations  <br/> and assign a color using the color palette.
 </div>
+
+<div style="width:{{ treeWidth +10 }}px; padding-left: 10px;">
+    <input  ng-change="rangeChange()" ng-model="cutoff" type=range id=weight min=0 value="cutoff" max="10" step=0.1/>
+    {{ cutoff}}
+</div>
+
+
+
+<div id="phyloplot"></div>
+
+<div phylo-info id="phyloinfo">
+</div>
+

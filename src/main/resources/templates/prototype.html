@@ -46,6 +46,8 @@
 
     <!---- External --->
 
+    <script type="text/javascript" src="/js/kingfisherApp/js/nouislider/distribute/nouislider.js"></script>
+
     <script type="text/javascript" src="/js/kingfisherApp/js/modernizr.custom.js"></script>
 
 
@@ -130,8 +132,7 @@
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#mainAccordion" href="#collapseOne"
                                    aria-expanded="true" aria-controls="collapseOne">
-                                    KingFisher Control Panel
-
+                                    KingFisher
                                 </a>
                             </h4>
                         </div>
@@ -141,19 +142,8 @@
                                 <div class="col-md-6">
                                     <h3> Introduction</h3>
 
-                                    Tumour heterogeneity(TH) describes the differences observed in cells within the same tumour
-                                    as a result of clonal evolution. These differences have been shown to plays an important role in
-                                    cancer treatment with major impact on the clinical outcomes<br/><br/>
-
-
-                                    Kingfisher was developed as a tool to provide a guided visual tour to understand these clonal evolution events
-                                    based on variant allelic frequency of mutations observed in the tumour sample. <br/><br/>
-
-                                    Essentially, KingFisher allow the automation in the creation of 'Fish Plot' and several summary plots
-                                    which have been used in frequent to represent tumour heterogenetiy in literature.<br/><br/>
-
-                                    Find out more out on TH by clicking the link <a href="http://www.bloodjournal.org/content/125/9/1367">here</a>
-                                    or you can get started with Kingfisher by filling up the form on the right.<br/><br/>
+                                    Kingfisher is an open-source tool for visualizing tumor evolution.<br/><br/>
+                                    It takes as input a matrix of variant allele frequencies, and then guides the user in creating a “Fish Plot” describing the major clonal events.<br/><br/>
 
                                     For more information on data format and requirement please refer to XXX<br/><br/>
 
@@ -189,7 +179,7 @@
                                     <h2> Summary Plots : <i><b>  {{ data.title }}</b></i></h2>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <h3>Figure 1 : Mutation over time </h3>
+                                            <h3>Figure 1 : Change in variant allelic frequency over time </h3>
                                             <lineplot id="linechart" data="lineplot">
 
 
@@ -197,31 +187,28 @@
                                             </lineplot>
                                         </div>
                                         <div class="col-md-6">
-                                            <h3>Figure 2 : Vaf Score Across Mutations/Cluster </h3>
+                                            <h3>Figure 2 : Variant allelic frequency across mutations </h3>
                                             <boxplot id="box_plot" data="boxplot"></boxplot>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div phylogenetic id="phylogenetic" data="newick">
-                                            <div id="phyloplot" class="col-md-6">
-                                                <h3> Figure 3 : Hierarchical Clustering Information  </h3>
-                                            </div>
-                                            <div phylo-info id="phyloinfo" class="col-md-6 vcenter"></div>
+                                        <div phylogenetic id="phylogenetic" data="newick"  class="col-md-6">
+                                        </div>
 
+                                        <div class="col-md-6">
+                                            <h3> Figure 4 :Fish plot - Proposed Clonal Evolution</h3>
+                                            <fishbone data="fishbone" ></fishbone>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-12">
-                                        <h3> Fish Bone : Proposed Clonal Evolution</h3>
-                                        <fishbone data="fishbone" ></fishbone>
-                                        </div>
+
 
 
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <h3> Fish plot : Proposed Clonal Evolution</h3>
+                                            <h3> Figure 4 :Fish plot - Proposed Clonal Evolution</h3>
                                             <fishplot data="fishbone" ></fishplot>
                                         </div>
 
@@ -234,7 +221,6 @@
 
                                     <div class="row">
                                         <div class="col-md-12">
-
                                             <h3> Summary </h3>
                                             <table data="table" class="table"></table>
                                         </div>

@@ -345,7 +345,6 @@ nav#footer p{
 	padding-top: 40px;
 
 }
-.node text { font: 12px sans-serif; }
 
 .link {
 	fill: none;
@@ -373,7 +372,20 @@ nav#footer p{
 .axis line {
 	stroke-width: 1px;
 	shape-rendering: crispEdges;
-
-
 }
+
+.sp-preview {
+	height : 13px;
+	width : 13px;
+}
+
+.sp-replacer {
+	height : 14px;
+	width : 14px;
+	padding : 0px;
+	border : none;
+	margin-left : 2px;
+}
+
+
 

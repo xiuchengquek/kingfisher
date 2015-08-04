@@ -33,11 +33,11 @@ angular.module('kingFisherApp')
                 var tree = plotParsers.parseTree(vafData, clusters, timePoint, nodeProfiles);
                 var fishBones = fishPlotFactory.constructTree(tree);
                 $scope.lineplot = plotParsers.parseGoogleLine(vafData, timePoint, nodeProfiles);
-               $scope.boxplot = plotParsers.parseBox(vafData, clusters);
+                $scope.boxplot = plotParsers.parseBox(vafData, clusters);
                 $scope.newick = { newick : newick , clusters : nodeProfiles};
                 $scope.table = plotParsers.parseTable(vafData, clusters );
-               $scope.fishbone = fishBones;
-               $scope.fishplot = fishBones;
+                $scope.fishbone = fishBones;
+                $scope.fishplot = fishBones;
             })
         };
 
@@ -50,22 +50,18 @@ angular.module('kingFisherApp')
             var nodeProfiles = mutationClusters.getNodeProfile();
             var tree = plotParsers.parseTree(vafData, clusters, timePoint, nodeProfiles);
             var fishBones = fishPlotFactory.constructTree(tree);
-
-
             $scope.boxplot = plotParsers.parseBox(vafData, clusters);
-            $scope.newick.clusters = clusters, nodeProfiles;
+            //$scope.newick['clusters'] = nodeProfiles;
             $scope.lineplot = plotParsers.parseGoogleLine(vafData, timePoint, nodeProfiles);
-            console.log('after line', clusters , nodeProfiles);
             $scope.table = plotParsers.parseTable(vafData, clusters );
-            console.log('after table', clusters, nodeProfiles);
             $scope.fishbone = fishBones;
             $scope.fishplot = fishBones;
 
 
-            console.log(' after fish' ,clusters, nodeProfiles);
+            if(!$scope.$$phase) {
+                $scope.$digest();
+            }
 
-
-            $scope.$digest();
         });
 
         $scope.loadSample= function() {

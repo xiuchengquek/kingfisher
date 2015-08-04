@@ -121,214 +121,232 @@ describe("plotsFactory Tests", function(){
 
     })
 
-    describe("Test TreeParser factory", function(){
+    describe("Test TreeParser factory", function() {
 
-        var treeParser, fishPlotFactory;
+        var treeParser, fishPlotFactory, newTreeParser;
         var expected, mockInput;
 
-        beforeEach(inject(function(_plotParsers_, _fishPlotFactory_) {
-                plotParsers = _plotParsers_;
+        beforeEach(inject(function (_plotParsers_, _fishPlotFactory_) {
+                plotParsers     = _plotParsers_;
                 fishPlotFactory = _fishPlotFactory_;
 
-                treeParser = plotParsers.parseTree;
+                treeParser    = plotParsers.parseTree;
+                newTreeParser = plotParsers.parseNewTree;
 
 
-                expected  = { "value": { 	"SampleA-1": [{ mut: 'GeneA_g.[100A>C]', mean: 0.52, score: 0.48, group: '#aec7e8', groupOrd: 0 },
-                { mut: 'GeneB_g.[1000G>T]', mean: 0.52, score: 0.48, group: '#aec7e8', groupOrd: 1 },
-                { mut: 'GeneC_g.[1000G>T]', mean: 0.52, score: 0.48, group: '#aec7e8', groupOrd: 2 },
-                { mut: 'GeneD_g.[1000G>T]', mean: 0.21, score: 0.38, group: '#ff0000', groupOrd: 0 },
-                { mut: 'GeneE_g.[1000G>T]', mean: 0.21, score: 0.38, group: '#ff0000', groupOrd: 1 },
-                { mut: 'GeneF_g.[1000G>T]', mean: 0.22, score: 0.1, group: '#1f77b4', groupOrd: 0 } ],
-            "SampleA-2": [{ mut: 'GeneA_g.[100A>C]', mean: 0.52, score: 0.55, group: '#aec7e8', groupOrd: 0 },
-                { mut: 'GeneB_g.[1000G>T]', mean: 0.52, score: 0.55, group: '#aec7e8', groupOrd: 1 },
-                { mut: 'GeneC_g.[1000G>T]', mean: 0.52, score: 0.55, group: '#aec7e8', groupOrd: 2 },
-                { mut: 'GeneD_g.[1000G>T]', mean: 0.21, score: 0.19, group: '#ff0000', groupOrd: 0 },
-                { mut: 'GeneE_g.[1000G>T]', mean: 0.21, score: 0.19, group: '#ff0000', groupOrd: 1 },
-                { mut: 'GeneF_g.[1000G>T]', mean: 0.22, score: 0.24, group: '#1f77b4', groupOrd: 0 } ],
-            "SampleA-3": [{ mut: 'GeneA_g.[100A>C]', mean: 0.52, score: 0.53, group: '#aec7e8', groupOrd: 0 },
-                { mut: 'GeneB_g.[1000G>T]', mean: 0.52, score: 0.53, group: '#aec7e8', groupOrd: 1 },
-                { mut: 'GeneC_g.[1000G>T]', mean: 0.52, score: 0.53, group: '#aec7e8', groupOrd: 2 },
-                { mut: 'GeneD_g.[1000G>T]', mean: 0.21, score: 0.07, group: '#ff0000', groupOrd: 0 },
-                { mut: 'GeneE_g.[1000G>T]', mean: 0.21, score: 0.07, group: '#ff0000', groupOrd: 1 },
-                { mut: 'GeneF_g.[1000G>T]', mean: 0.22, score: 0.32, group: '#1f77b4', groupOrd: 0 } ] },
+                expected = {
+                    "value": {
+                        "SampleA-1": [{mut: 'GeneA_g.[100A>C]', mean: 0.52, score: 0.48, group: '#aec7e8', groupOrd: 0},
+                            {mut: 'GeneB_g.[1000G>T]', mean: 0.52, score: 0.48, group: '#aec7e8', groupOrd: 1},
+                            {mut: 'GeneC_g.[1000G>T]', mean: 0.52, score: 0.48, group: '#aec7e8', groupOrd: 2},
+                            {mut: 'GeneD_g.[1000G>T]', mean: 0.21, score: 0.38, group: '#ff0000', groupOrd: 0},
+                            {mut: 'GeneE_g.[1000G>T]', mean: 0.21, score: 0.38, group: '#ff0000', groupOrd: 1},
+                            {mut: 'GeneF_g.[1000G>T]', mean: 0.22, score: 0.1, group: '#1f77b4', groupOrd: 0}],
+                        "SampleA-2": [{mut: 'GeneA_g.[100A>C]', mean: 0.52, score: 0.55, group: '#aec7e8', groupOrd: 0},
+                            {mut: 'GeneB_g.[1000G>T]', mean: 0.52, score: 0.55, group: '#aec7e8', groupOrd: 1},
+                            {mut: 'GeneC_g.[1000G>T]', mean: 0.52, score: 0.55, group: '#aec7e8', groupOrd: 2},
+                            {mut: 'GeneD_g.[1000G>T]', mean: 0.21, score: 0.19, group: '#ff0000', groupOrd: 0},
+                            {mut: 'GeneE_g.[1000G>T]', mean: 0.21, score: 0.19, group: '#ff0000', groupOrd: 1},
+                            {mut: 'GeneF_g.[1000G>T]', mean: 0.22, score: 0.24, group: '#1f77b4', groupOrd: 0}],
+                        "SampleA-3": [{mut: 'GeneA_g.[100A>C]', mean: 0.52, score: 0.53, group: '#aec7e8', groupOrd: 0},
+                            {mut: 'GeneB_g.[1000G>T]', mean: 0.52, score: 0.53, group: '#aec7e8', groupOrd: 1},
+                            {mut: 'GeneC_g.[1000G>T]', mean: 0.52, score: 0.53, group: '#aec7e8', groupOrd: 2},
+                            {mut: 'GeneD_g.[1000G>T]', mean: 0.21, score: 0.07, group: '#ff0000', groupOrd: 0},
+                            {mut: 'GeneE_g.[1000G>T]', mean: 0.21, score: 0.07, group: '#ff0000', groupOrd: 1},
+                            {mut: 'GeneF_g.[1000G>T]', mean: 0.22, score: 0.32, group: '#1f77b4', groupOrd: 0}]
+                    },
 
-            "nodeProfile": {
-                    "GeneA_g.[100A>C]" : { cluster: '#aec7e8', score: [ { x: 0.48, y: 'SampleA-1' }, { x: 0.55, y: 'SampleA-2' }, { x: 0.53, y: 'SampleA-3' } ], groupOrd: 0 },
-                    "GeneB_g.[1000G>T]": { cluster: '#aec7e8', score: [ { x: 0.48, y: 'SampleA-1' }, { x: 0.55, y: 'SampleA-2' }, { x: 0.53, y: 'SampleA-3' } ], groupOrd: 1 },
-                    "GeneC_g.[1000G>T]": { cluster: '#aec7e8', score: [ { x: 0.48, y: 'SampleA-1' }, { x: 0.55, y: 'SampleA-2' }, { x: 0.53, y: 'SampleA-3' } ], groupOrd: 2 },
-                    "GeneD_g.[1000G>T]": { cluster: '#ff0000', score: [ { x: 0.38, y: 'SampleA-1' }, { x: 0.19, y: 'SampleA-2' }, { x: 0.07, y: 'SampleA-3' } ], groupOrd: 0 },
-                    "GeneE_g.[1000G>T]": { cluster: '#ff0000', score: [ { x: 0.38, y: 'SampleA-1' }, { x: 0.19, y: 'SampleA-2' }, { x: 0.07, y: 'SampleA-3' } ], groupOrd: 1 },
-                    "GeneF_g.[1000G>T]": { cluster: '#1f77b4', score: [ { x: 0.1, y: 'SampleA-1' }, { x: 0.24, y: 'SampleA-2' }, { x: 0.32, y: 'SampleA-3' }  ], groupOrd: 0 }
-                },
-
-
+                    "nodeProfile": {
+                        "GeneA_g.[100A>C]": {
+                            cluster: '#aec7e8',
+                            score: [{x: 0.48, y: 'SampleA-1'}, {x: 0.55, y: 'SampleA-2'}, {x: 0.53, y: 'SampleA-3'}],
+                            groupOrd: 0
+                        },
+                        "GeneB_g.[1000G>T]": {
+                            cluster: '#aec7e8',
+                            score: [{x: 0.48, y: 'SampleA-1'}, {x: 0.55, y: 'SampleA-2'}, {x: 0.53, y: 'SampleA-3'}],
+                            groupOrd: 1
+                        },
+                        "GeneC_g.[1000G>T]": {
+                            cluster: '#aec7e8',
+                            score: [{x: 0.48, y: 'SampleA-1'}, {x: 0.55, y: 'SampleA-2'}, {x: 0.53, y: 'SampleA-3'}],
+                            groupOrd: 2
+                        },
+                        "GeneD_g.[1000G>T]": {
+                            cluster: '#ff0000',
+                            score: [{x: 0.38, y: 'SampleA-1'}, {x: 0.19, y: 'SampleA-2'}, {x: 0.07, y: 'SampleA-3'}],
+                            groupOrd: 0
+                        },
+                        "GeneE_g.[1000G>T]": {
+                            cluster: '#ff0000',
+                            score: [{x: 0.38, y: 'SampleA-1'}, {x: 0.19, y: 'SampleA-2'}, {x: 0.07, y: 'SampleA-3'}],
+                            groupOrd: 1
+                        },
+                        "GeneF_g.[1000G>T]": {
+                            cluster: '#1f77b4',
+                            score: [{x: 0.1, y: 'SampleA-1'}, {x: 0.24, y: 'SampleA-2'}, {x: 0.32, y: 'SampleA-3'}],
+                            groupOrd: 0
+                        }
+                    },
 
 
                 }
             }
-            ));
+        ));
 
 
-
-
-
-
-
-
-
-
-        it('Test Tree Parser with cluster information', function() {
+        it('Test Tree Parser with cluster information', function () {
 
             var results;
             results = treeParser(mockClustered.vafMap, mockClustered.clusters,
-                                 mockClustered.timePoint, mockClustered.nodeProfile );
+                mockClustered.timePoint, mockClustered.nodeProfile);
             expect(results).toEqual(expected);
 
         })
 
 
-        it('Test Construction of Tree', function(){
+        it('Test Construction of Tree', function () {
 
             var results;
 
             var expectedTree = {
-                mut:'GeneA_g.[100A>C]',
-                    mean:0.52,
-                group:'#aec7e8',
-                groupOrd:0,
-                cluster:{
-                cluster:'#aec7e8',
-                    score:[
+                mut: 'GeneA_g.[100A>C]',
+                mean: 0.52,
+                group: '#aec7e8',
+                groupOrd: 0,
+                cluster: {
+                    cluster: '#aec7e8',
+                    score: [
+                        {
+                            x: 0.48,
+                            y: 'SampleA-1'
+                        },
+                        {
+                            x: 0.55,
+                            y: 'SampleA-2'
+                        },
+                        {
+                            x: 0.53,
+                            y: 'SampleA-3'
+                        }
+                    ]
+                },
+                children: [
                     {
-                        x:0.48,
-                        y:'SampleA-1'
-                    },
-                    {
-                        x:0.55,
-                        y:'SampleA-2'
-                    },
-                    {
-                        x:0.53,
-                        y:'SampleA-3'
-                    }
-                ]
-            },
-                children:[
-                    {
-                        mut:'GeneB_g.[1000G>T]',
-                        mean:0.52,
-                        group:'#aec7e8',
-                        groupOrd:1,
-                        parent:'GeneA_g.[100A>C]',
-                        cluster:{
-                            cluster:'#aec7e8',
-                            score:[
+                        mut: 'GeneB_g.[1000G>T]',
+                        mean: 0.52,
+                        group: '#aec7e8',
+                        groupOrd: 1,
+                        parent: 'GeneA_g.[100A>C]',
+                        cluster: {
+                            cluster: '#aec7e8',
+                            score: [
                                 {
-                                    x:0.48,
-                                    y:'SampleA-1'
+                                    x: 0.48,
+                                    y: 'SampleA-1'
                                 },
                                 {
-                                    x:0.55,
-                                    y:'SampleA-2'
+                                    x: 0.55,
+                                    y: 'SampleA-2'
                                 },
                                 {
-                                    x:0.53,
-                                    y:'SampleA-3'
+                                    x: 0.53,
+                                    y: 'SampleA-3'
                                 }
                             ]
                         },
-                        children:[
+                        children: [
                             {
-                                mut:'GeneC_g.[1000G>T]',
-                                mean:0.52,
-                                group:'#aec7e8',
-                                groupOrd:2,
-                                parent:'GeneB_g.[1000G>T]',
-                                cluster:{
-                                    cluster:'#aec7e8',
-                                    score:[
+                                mut: 'GeneC_g.[1000G>T]',
+                                mean: 0.52,
+                                group: '#aec7e8',
+                                groupOrd: 2,
+                                parent: 'GeneB_g.[1000G>T]',
+                                cluster: {
+                                    cluster: '#aec7e8',
+                                    score: [
                                         {
-                                            x:0.48,
-                                            y:'SampleA-1'
+                                            x: 0.48,
+                                            y: 'SampleA-1'
                                         },
                                         {
-                                            x:0.55,
-                                            y:'SampleA-2'
+                                            x: 0.55,
+                                            y: 'SampleA-2'
                                         },
                                         {
-                                            x:0.53,
-                                            y:'SampleA-3'
+                                            x: 0.53,
+                                            y: 'SampleA-3'
                                         }
                                     ]
                                 },
-                                children:[
+                                children: [
                                     {
-                                        mut:'GeneE_g.[1000G>T]',
-                                        mean:0.21,
-                                        group:'#ff0000',
-                                        groupOrd:1,
-                                        parent:'GeneC_g.[1000G>T]',
-                                        cluster:{
-                                            cluster:'#ff0000',
-                                            score:[
+                                        mut: 'GeneE_g.[1000G>T]',
+                                        mean: 0.21,
+                                        group: '#ff0000',
+                                        groupOrd: 1,
+                                        parent: 'GeneC_g.[1000G>T]',
+                                        cluster: {
+                                            cluster: '#ff0000',
+                                            score: [
                                                 {
-                                                    x:0.38,
-                                                    y:'SampleA-1'
+                                                    x: 0.38,
+                                                    y: 'SampleA-1'
                                                 },
                                                 {
-                                                    x:0.19,
-                                                    y:'SampleA-2'
+                                                    x: 0.19,
+                                                    y: 'SampleA-2'
                                                 },
                                                 {
-                                                    x:0.07,
-                                                    y:'SampleA-3'
+                                                    x: 0.07,
+                                                    y: 'SampleA-3'
                                                 }
                                             ]
                                         },
-                                        children:[
+                                        children: [
                                             {
-                                                mut:'GeneD_g.[1000G>T]',
-                                                cluster:{
-                                                    cluster:'#ff0000',
-                                                    score:[
+                                                mut: 'GeneD_g.[1000G>T]',
+                                                cluster: {
+                                                    cluster: '#ff0000',
+                                                    score: [
                                                         {
-                                                            x:0.38,
-                                                            y:'SampleA-1'
+                                                            x: 0.38,
+                                                            y: 'SampleA-1'
                                                         },
                                                         {
-                                                            x:0.19,
-                                                            y:'SampleA-2'
+                                                            x: 0.19,
+                                                            y: 'SampleA-2'
                                                         },
                                                         {
-                                                            x:0.07,
-                                                            y:'SampleA-3'
+                                                            x: 0.07,
+                                                            y: 'SampleA-3'
                                                         }
                                                     ]
                                                 },
-                                                parent:'GeneE_g.[1000G>T]'
+                                                parent: 'GeneE_g.[1000G>T]'
                                             }
                                         ]
                                     },
                                     {
-                                        mut:'GeneF_g.[1000G>T]',
-                                        cluster:{
-                                            cluster:'#1f77b4',
-                                            score:[
+                                        mut: 'GeneF_g.[1000G>T]',
+                                        cluster: {
+                                            cluster: '#1f77b4',
+                                            score: [
                                                 {
-                                                    x:0.1,
-                                                    y:'SampleA-1'
+                                                    x: 0.1,
+                                                    y: 'SampleA-1'
                                                 },
                                                 {
-                                                    x:0.24,
-                                                    y:'SampleA-2'
+                                                    x: 0.24,
+                                                    y: 'SampleA-2'
                                                 },
                                                 {
-                                                    x:0.32,
-                                                    y:'SampleA-3'
+                                                    x: 0.32,
+                                                    y: 'SampleA-3'
                                                 }
                                             ]
                                         },
-                                        parent:'GeneC_g.[1000G>T]'
+                                        parent: 'GeneC_g.[1000G>T]'
                                     }
                                 ]
                             }
@@ -336,7 +354,6 @@ describe("plotsFactory Tests", function(){
                     }
                 ]
             }
-
 
 
             var paths = fishPlotFactory.findPaths(expected.value);
@@ -347,14 +364,48 @@ describe("plotsFactory Tests", function(){
             expect(paths['GeneD_g.[1000G>T]'].length).toEqual(4);
             expect(paths['GeneE_g.[1000G>T]'].length).toEqual(3);
             expect(paths['GeneF_g.[1000G>T]'].length).toEqual(3);
-            var tree = fishPlotFactory.assemblePath(paths, expected.nodeProfile);
+            var tree  = fishPlotFactory.assemblePath(paths, expected.nodeProfile);
 
-            expect(tree).toEqual( expectedTree)
+            expect(tree).toEqual(expectedTree)
         });
 
 
+        it('Test new tree data', function () {
+
+            var results;
+            expected = [
+                {
+                    'cluster': '#aec7e8',
+                    'members': ['GeneA_g.[100A>C]', 'GeneB_g.[1000G>T]', 'GeneC_g.[1000G>T]'],
+                    'score': [0.48, 0.55, 0.53],
+                },
+                {
+                    'cluster': '#ff0000',
+                    'members': ['GeneD_g.[1000G>T]', 'GeneE_g.[1000G>T]'],
+                    'score': [0.38, 0.19, 0.07],
+                },
+                {
+                    'cluster': '#1f77b4',
+                    'members': ['GeneF_g.[1000G>T]'],
+                    'score': [0.1, 0.24, 0.32],
+                }
+            ];
+
+            results = newTreeParser(mockClustered.vafMap, mockClustered.clusters);
+            expect(results).toEqual(expected)
 
         })
+    })
+
+
+
+
+
+
+
+
+
+
 
 });
 
