@@ -131,7 +131,6 @@ describe("plotsFactory Tests", function(){
                 fishPlotFactory = _fishPlotFactory_;
 
                 treeParser    = plotParsers.parseTree;
-                newTreeParser = plotParsers.parseNewTree;
 
 
                 expected = {
@@ -193,17 +192,6 @@ describe("plotsFactory Tests", function(){
                 }
             }
         ));
-
-
-        it('Test Tree Parser with cluster information', function () {
-
-            var results;
-            results = treeParser(mockClustered.vafMap, mockClustered.clusters,
-                mockClustered.timePoint, mockClustered.nodeProfile);
-            expect(results).toEqual(expected);
-
-        })
-
 
         it('Test Construction of Tree', function () {
 
@@ -373,25 +361,65 @@ describe("plotsFactory Tests", function(){
         it('Test new tree data', function () {
 
             var results;
-            expected = [
-                {
-                    'cluster': '#aec7e8',
-                    'members': ['GeneA_g.[100A>C]', 'GeneB_g.[1000G>T]', 'GeneC_g.[1000G>T]'],
-                    'score': [0.48, 0.55, 0.53],
-                },
-                {
-                    'cluster': '#ff0000',
-                    'members': ['GeneD_g.[1000G>T]', 'GeneE_g.[1000G>T]'],
-                    'score': [0.38, 0.19, 0.07],
-                },
-                {
-                    'cluster': '#1f77b4',
-                    'members': ['GeneF_g.[1000G>T]'],
-                    'score': [0.1, 0.24, 0.32],
-                }
-            ];
 
-            results = newTreeParser(mockClustered.vafMap, mockClustered.clusters);
+            expected = {
+                "SampleA-1" :
+                    [
+                        {
+                            'cluster': '#aec7e8',
+                            'members': ['GeneA_g.[100A>C]', 'GeneB_g.[1000G>T]', 'GeneC_g.[1000G>T]'],
+                            'score': 0.48,
+                        },
+                        {
+                            'cluster': '#ff0000',
+                            'members': ['GeneD_g.[1000G>T]', 'GeneE_g.[1000G>T]'],
+                            'score': 0.38,
+                        },
+                        {
+                            'cluster': '#1f77b4',
+                            'members': ['GeneF_g.[1000G>T]'],
+                            'score': 0.1,
+                        }
+                    ],
+                "SampleA-2" :
+                    [
+                        {
+                            'cluster': '#aec7e8',
+                            'members': ['GeneA_g.[100A>C]', 'GeneB_g.[1000G>T]', 'GeneC_g.[1000G>T]'],
+                            'score': 0.55,
+                        },
+                        {
+                            'cluster': '#ff0000',
+                            'members': ['GeneD_g.[1000G>T]', 'GeneE_g.[1000G>T]'],
+                            'score': 0.19,
+                        },
+                        {
+                            'cluster': '#1f77b4',
+                            'members': ['GeneF_g.[1000G>T]'],
+                            'score': 0.24,
+                        }
+                    ],
+                "SampleA-3" :
+                    [
+                        {
+                            'cluster': '#aec7e8',
+                            'members': ['GeneA_g.[100A>C]', 'GeneB_g.[1000G>T]', 'GeneC_g.[1000G>T]'],
+                            'score': 0.53,
+                        },
+                        {
+                            'cluster': '#ff0000',
+                            'members': ['GeneD_g.[1000G>T]', 'GeneE_g.[1000G>T]'],
+                            'score': 0.07,
+                        },
+                        {
+                            'cluster': '#1f77b4',
+                            'members': ['GeneF_g.[1000G>T]'],
+                            'score': 0.32,
+                        }
+                    ],
+            };
+
+            results = treeParser(mockClustered.vafMap, mockClustered.clusters, mockClustered.timePoint);
             expect(results).toEqual(expected)
 
         })

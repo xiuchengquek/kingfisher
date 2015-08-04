@@ -118,9 +118,8 @@ angular.module('kingFisherApp')
         };
 
 
-        function parseNewTree (vafMap, clusters) {
-            var treeData = [];
-
+        function parseTree (vafMap, clusters, timePoint) {
+            var treeData = {};
             // get average of each cluster
             angular.forEach(clusters, function(members, key){
                 // this will return an array of array
@@ -137,78 +136,17 @@ angular.module('kingFisherApp')
                 // find mean for each timepoint
                 tMemberScore = tMemberScore.map(findMean);
                 // now remerge
-
                 var merged = [];
                 merged     = membersScore.concat.apply(merged, tMemberScore);
-                treeData.push({ 'cluster' : key, 'members' : members, 'score' :  merged })
-            });
 
-
-            return treeData
-
-
-        }
-
-        function parseTree (vafMap, clusters, timePoint, nodeProfile) {
-
-            var treeData  = {};
-            var mutations = Object.keys(clusters);
-
-            var nodeInfo = {};
-            angular.forEach(nodeProfile, function(value, key){
-                nodeInfo[key] = { cluster : value, score : []}
-            });
-
-
-            angular.forEach(mutations, function (mutations, index) {
-                // get the member
-                var members = clusters[mutations];
-                // get the value of each members
-                var membersScore = members.map(function (v) {
-                    return vafMap[v]
-                });
-                // transpose array
-
-                var tMemberScore = membersScore[0].map(function (col, i) {
-                    return membersScore.map(function (row) {
-                        return row[i]
-                    })
-                });
-
-                // now find the median of each time point
-                tMemberScore = tMemberScore.map(findMean);
-
-                // now remerge
-                var merged = [];
-                merged     = membersScore.concat.apply(merged, tMemberScore);
-                var mean   = findMean(merged);
-
-                angular.forEach(timePoint, function (time, index) {
-
-                    treeData[time] = treeData[time] || [];
-                    angular.forEach(members, function (value) {
-                        this.push({
-                            mut: value, mean: mean, score: tMemberScore[index], group: nodeProfile[value], groupOrd : members.indexOf(value)
-
-                        })
-                    }, treeData[time])
-
-                });
-
-                var timeValueScore = [];
-
-                angular.forEach(tMemberScore, function(value, index){
-                    timeValueScore[index] = { x : value, y : timePoint[index]}
-                });
-
-                angular.forEach(members, function(value){
-                    nodeInfo[value].score = timeValueScore;
-                    nodeInfo[value].groupOrd = members.indexOf(value)
+                angular.forEach(timePoint, function(val, idx){
+                    treeData[val] = treeData[val] || [];
+                    treeData[val].push({ 'cluster' : key, 'members' : members, 'score' :  merged[idx] })
                 })
             });
-
-            return {value: treeData, nodeProfile: nodeInfo};
+            return treeData
         }
+
 
             function parseTable  (vafMap, clusters) {
 
@@ -292,75 +230,14 @@ angular.module('kingFisherApp')
             return {data :  data, colors  : colors  };
         }
 
-        function parseGoogleBox ( vafMap, nodeProfile){
-
-            function fillNull (array) {
-
-                //sort array of array
-                var sortedArray = array.sort(function(a,b){ return b.length - a.length});
-                var maxLength = sortedArray[0].length;
-
-                angular.forEach(sortedArray, function(arr, index){
-                    var values = arr.slice(1);
-                    // make sure that all values are number
-                    values = values.map(Number);
-                    values.sort();
-                    var max = _.max(values);
-                    var min = _.min(values);
-                    var median = d3.median(values);
-                    var firstQuantile = Number(d3.quantile(values, 0.25).toFixed(2));
-                    var secondQuantile = Number(d3.quantile(values, 0.75).toFixed(2));
-
-                    while(arr.length < maxLength ){
-                        arr.push(null);
-                    }
-                    sortedArray[index] = arr.concat([max, min, firstQuantile, median, secondQuantile]);
-                });
-                return sortedArray;
-            }
-
-            var clusters = _.invert(nodeProfile, true);
-            var clusterNo = 1;
-            var colors = [];
-            var data = [];
-
-            angular.forEach(clusters, function(value, key){
-                var results = [];
-                var clusterName;
-                if (value.length > 1) {
-                    clusterName = "Cluster " + clusterNo;
-                    results.push(clusterName);
-                    angular.forEach(value, function(mutation){
-                        results = results.concat(vafMap[mutation].map(Number))
-                     });
-
-                    clusterNo++;
-                }
-                else {
-                    results = value.concat(vafMap[value[0]].map(Number))
-                }
-                data.push(results);
-                colors.push(key);
-            });
-
-            //fill blanks and metrics
-            data = fillNull(data);
-            return {data : data, colors : colors}
-
-        }
-
-
-
         return {
             parseBox: parseBox,
             parseTree : parseTree,
             parseGoogleLine : parseGoogleLine,
-            parseGoogleBox : parseGoogleBox,
             // parse vaf map and cluster info into a json array with each row containing
             // ({x: clusterName, y: merged, members: members, groupCol: mutations, mean : mean})
             parseTable: parseTable,
             parseLine: parseLine,
-            parseNewTree : parseNewTree,
         };
         // table is an array of mutations profile for each cluster.
     });
