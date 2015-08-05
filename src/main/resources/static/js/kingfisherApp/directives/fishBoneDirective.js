@@ -13,11 +13,14 @@ angular.module('kingFisherApp')
 
             templateUrl :"js/kingfisherApp/directives/templates/fishboneplot.html",
 
-
-
-
             link : function(scope, elem, attr){
+
                 function plot(source) {
+
+                    var data = source.value;
+                    var clusters = source.clusters;
+
+
                     d3.select("fishbone").select("svg").remove();
                     var margin = {top: 40, right: 120, bottom: 20, left: 20},
                         width = 560 - margin.right - margin.left,
@@ -38,7 +41,7 @@ angular.module('kingFisherApp')
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
                     // Compute the new tree layout.
-                    var nodes = tree.nodes(source).reverse(),
+                    var nodes = tree.nodes(data).reverse(),
                         links = tree.links(nodes);
 
                     // Compute the depth of the tree
@@ -54,9 +57,6 @@ angular.module('kingFisherApp')
                     // Normalize for fixed-depth.
                     nodes.forEach(function(d) { d.y = yScale(d.depth); });
 
-
-
-
                     // Declare the nodes TODO: change to mut name¦
                     var node = svg.selectAll("g.node")
                         .data(nodes, function(d) { return d.id || (d.id = ++i); });
@@ -70,19 +70,15 @@ angular.module('kingFisherApp')
                     nodeEnter.append("circle")
                         .attr("r", 10)
                         .attr('fill', function(d){
-                            return d.cluster.cluster
+                            return d.mut
                         })
 
-                    nodeEnter.append("text")
-                        .attr("dy", "30px")
-                        .attr("text-anchor", "start")
-                        .text(function(d) { return d.mut; })
-
-
-                        .attr('fill', function(d){
-                                return d.cluster.cluster
-
-                        })
+                    nodeEnter.selectAll('g.node')
+                        .data( function (d) { console.log(d) ;return clusters[d.mut]})
+                        .enter()
+                        .append('text')
+                        .attr("dy", function(d, i) { return (i * 15) + 30 + 'px'})
+                        .text(function(d) { console.log(d); return d})
 
 
                     // Declare the links
@@ -93,31 +89,15 @@ angular.module('kingFisherApp')
                     link.enter().insert("path", "g")
                         .attr("class", "link")
                         .attr("d", diagonal);
-
                 }
 
-
-                scope.$watch('data', function(newVal){
+                scope.$watchCollection('data', function(newVal){
                     if (newVal !== undefined){
                         plot(newVal)
 
                     }
-
-
-
-
-
-
-
                 })
-
-
-
-
             }
-
-
-
         }
     });
 

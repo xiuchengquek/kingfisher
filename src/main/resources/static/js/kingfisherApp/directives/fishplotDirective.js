@@ -14,21 +14,44 @@ angular.module('kingFisherApp').directive('fishplot', function(){
 
        link : function(scope, element, attr){
 
+            // bind to scope for unittesting
+           scope.addGroupMembers = function(nodes, clusters, data){
+               var clusterScore = {};
+               angular.forEach(data, function(value, key){
+                    angular.forEach(value, function(val, idx){
+                        this[val.cluster]  = this[val.cluster] || [];
+                        this[val.cluster].push(val.score);
+                    }, clusterScore);
+               });
 
+               angular.forEach(nodes, function(value, idx){
+                   var members = clusters[value.mut];
+                   value.members = members;
+                   value.score = clusterScore[value.mut]
+               })
+           };
+            /**
            function fishPlot(source){
 
+               var data = source.treeData;
+               var bone = source.structure;
+               var clusters = source.clusters;
 
+               // clear any exisitng plot
                d3.select("fishPlot").select("svg").remove();
+
+               // set margins and paramters
                var margin = {top: 40, right: 20, bottom: 20, left: 20},
-                   width = 960 - margin.right - margin.left,
-                   height = 400 - margin.top - margin.bottom;
+               width = 960 - margin.right - margin.left,
+               height = 400 - margin.top - margin.bottom;
 
-
-
-
-
+               // create a tree
                var tree = d3.layout.tree().size([height, width]);
-               var nodes = tree.nodes(source);
+               // add node information - this will tell who are the parents and who are the parents
+               var nodes = tree.nodes(data);
+
+               //
+
                nodes = nodes.map(function(d) {d.depth = parseInt(d.depth); return d});
                var depths = nodes.map(function(d) { return d.depth});
 
@@ -66,17 +89,6 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                    .domain(depthsScale)
                    .range([0, xScale.rangeBand()]);
 
-                console.log(xScale.rangeBand());
-
-               console.log('this is depth', depths)
-
-
-               console.log(xScaleTime[clusterOrder[2]]);
-               console.log(xScaleTime(1));
-               console.log(xScaleTime(2));
-               console.log(xScaleTime(4));
-
-
                var branchingPoints = _.countBy(nodes, function(n) { return n.depth});
 
                // find the at which depth branching is required.
@@ -91,9 +103,6 @@ angular.module('kingFisherApp').directive('fishplot', function(){
               var yMax = d3.max(nodes, function(n) {
                     return d3.max(n.cluster.score, function(d) { return d.x  })
                });
-
-
-               console.log('this is your ymax' , yMax);
 
 
                // now we need to buy the yScale; this will be a linear scale, but modification will have to be done later
@@ -324,56 +333,9 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                    .attr("id", function(d,i) { return i })
                    .attr("transform", function(d) { console.log(d);return "translate(" + xScale(d) + ")" })
                    .each(plotTimePoint);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-               //
-               //
-               //var firstTimePoint = timePoints[0];
-               //var t1 = xScale(firstTimePoint);
-               //var samples = nodes.map(function(d){ return d.mut })
-               //
-               //var t1Scale = d3.scale.ordinal()
-               //    .domain(samples)
-               //    .rangeBand([0, t1]);
-               //
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
            }
+
+             **/
 
 
            scope.$watch('data', function(newVal, oldVal){

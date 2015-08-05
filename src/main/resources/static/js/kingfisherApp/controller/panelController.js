@@ -31,13 +31,13 @@ angular.module('kingFisherApp')
                 var clusters = mutationClusters.getClusters();
                 var nodeProfiles = mutationClusters.getNodeProfile();
                 var tree = plotParsers.parseTree(vafData, clusters, timePoint, nodeProfiles);
-                var fishBones = fishPlotFactory.constructTree(tree);
+                var fishBones = fishPlotFactory.parseFishBone(tree);
                 $scope.lineplot = plotParsers.parseGoogleLine(vafData, timePoint, nodeProfiles);
                 $scope.boxplot = plotParsers.parseBox(vafData, clusters);
                 $scope.newick = { newick : newick , clusters : nodeProfiles};
                 $scope.table = plotParsers.parseTable(vafData, clusters );
-                $scope.fishbone = fishBones;
-                $scope.fishplot = fishBones;
+                $scope.fishbone = { 'value' : fishBones, 'clusters' : clusters };
+                $scope.fishplot =  {'value' : fishBones, 'clusters' : clusters , 'treeData' : tree };
             })
         };
 
@@ -49,13 +49,13 @@ angular.module('kingFisherApp')
             var clusters = mutationClusters.getClusters();
             var nodeProfiles = mutationClusters.getNodeProfile();
             var tree = plotParsers.parseTree(vafData, clusters, timePoint, nodeProfiles);
-            var fishBones = fishPlotFactory.constructTree(tree);
+            var fishBones = fishPlotFactory.parseFishBone(tree);
             $scope.boxplot = plotParsers.parseBox(vafData, clusters);
             //$scope.newick['clusters'] = nodeProfiles;
             $scope.lineplot = plotParsers.parseGoogleLine(vafData, timePoint, nodeProfiles);
             $scope.table = plotParsers.parseTable(vafData, clusters );
-            $scope.fishbone = fishBones;
-            $scope.fishplot = fishBones;
+            $scope.fishbone = { 'value' : fishBones, 'clusters' : clusters };
+            $scope.fishplot =  {'structure' : fishBones, 'clusters' : clusters , 'value' : tree };
 
 
             if(!$scope.$$phase) {

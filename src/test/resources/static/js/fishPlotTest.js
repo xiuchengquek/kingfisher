@@ -10,14 +10,8 @@ describe("fishplot factory Tests", function(){
 
     beforeEach(module("kingFisherApp"));
 
-
-
-
-
-
     beforeEach(inject(function(_fishPlotFactory_) {
             fishPlotFactory = _fishPlotFactory_;
-
 
             complexFishData = {
 
@@ -209,8 +203,6 @@ describe("fishplot factory Tests", function(){
         it('check complex tree structure', function(){
             var results = fishPlotFactory.parseFishBone(complexFishData)
             expect(results).toEqual(mockComplexTree)
-
-
         })
 
 

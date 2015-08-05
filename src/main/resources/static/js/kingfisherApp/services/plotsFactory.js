@@ -32,9 +32,7 @@ angular.module('kingFisherApp')
 
             clusters = _clusters;
             nodeProfiles = _nodeProfiles;
-
             deferred.resolve(clusters);
-
             return deferred.promise
         };
 
