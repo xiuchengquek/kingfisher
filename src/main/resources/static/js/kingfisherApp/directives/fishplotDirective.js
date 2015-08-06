@@ -14,14 +14,16 @@ angular.module('kingFisherApp').directive('fishplot', function(){
 
        link : function(scope, element, attr){
 
-            // bind to scope for unittesting
-           scope.addGroupMembers = function(nodes, clusters, data){
+           console.log('loaded')
+
+
+           function addGroupMembers(nodes, clusters, data){
                var clusterScore = {};
                angular.forEach(data, function(value, key){
                     angular.forEach(value, function(val, idx){
-                        this[val.cluster]  = this[val.cluster] || [];
-                        this[val.cluster].push(val.score);
-                    }, clusterScore);
+                        clusterScore[val.cluster]  = clusterScore[val.cluster] || [];
+                        clusterScore[val.cluster].push(val.score);
+                    });
                });
 
                angular.forEach(nodes, function(value, idx){
@@ -30,104 +32,163 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                    value.score = clusterScore[value.mut]
                })
            };
-            /**
-           function fishPlot(source){
 
-               var data = source.treeData;
-               var bone = source.structure;
+           function fishPlot(source) {
+
+               var data     = source.value;
+               var bone     = source.structure;
                var clusters = source.clusters;
 
                // clear any exisitng plot
-               d3.select("fishPlot").select("svg").remove();
+               d3.select(element[0]).select("svg").remove();
 
                // set margins and paramters
                var margin = {top: 40, right: 20, bottom: 20, left: 20},
-               width = 960 - margin.right - margin.left,
-               height = 400 - margin.top - margin.bottom;
+                   width  = 960 - margin.right - margin.left,
+                   height = 400 - margin.top - margin.bottom;
 
                // create a tree
                var tree = d3.layout.tree().size([height, width]);
                // add node information - this will tell who are the parents and who are the parents
-               var nodes = tree.nodes(data);
+               var nodes = tree.nodes(bone).reverse();
 
-               //
-
+               // convert depth to int f
                nodes = nodes.map(function(d) {d.depth = parseInt(d.depth); return d});
                var depths = nodes.map(function(d) { return d.depth});
 
+               // find the number of layers in the cluster
+               var branchingDepth = (_.filter(_.countBy(depths, _.identity), function(v, k) { return v > 1   }));
+
+               // add score and members to each node.
+
+
+
                depths = _.uniq(depths);
                depths.sort(function(a,b){return a-b});
+               var timePoints =  Object.keys(data);
+
+               // create a scale in to 2 parts, the first time point will take up half of the width
+               // the 2nd part will be divived according to the number of timepoints
+               var xScale = d3.scale.ordinal()
+                   .domain([1, timePoints.length - 1 ])
+                   .rangeRoundBands([width/2, width]);
+
+               var svg = d3.select(element[0]).append("svg")
+                   .attr("width", width + margin.right + margin.left)
+                   .attr("height", height + margin.top + margin.bottom)
+                   .append("g")
+                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+               var main = svg.selectAll("main")
+                   .data(timePoints)
+                   .enter()
+                   .append("g")
+                   .classed('timePanel', true)
+                   .attr("id", function(d,i) { return i })
+                   .attr("transform", function(d, i) { if (i !== 0 ) {return "translate(" + xScale(i) + ")" }})
+
+
+               main.selectAll("circle")
+                   .data(node)
+                   .enter()
+                   .append("circle")
+                   .attr('cx', 10)
+                   .attr('cy', 20)
+                   .attr('r', 2)
+                   .attr('fill', 'red')
 
 
 
-               var clusters= nodes.map(function(d){ return d.cluster});
 
 
-               console.log('this is nodes' , nodes, clusters);
 
-               var clusterSize = _.countBy(clusters, function(d) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   /**
+
+                var clusters = nodes.map(function(d){ return d.cluster});
+
+
+                console.log('this is nodes' , nodes, clusters);
+
+                var clusterSize = _.countBy(clusters, function(d) {
                    return d.cluster
                });
 
-               var timePoints =  nodes[0].cluster.score.map(function(x, i) { return x.y});
-                             // determine the position of each time point
-               var xScale = d3.scale.ordinal()
-                   .domain(timePoints)
-                   .rangeBands([0, width]);
 
-               var clusterOrder = nodes.map(function(d) { return d.depth});
+                // determine the position of each time point
+                var xScale = d3.scale.ordinal()
+                .domain(timePoints)
+                .rangeBands([0, width]);
 
-               console.log(clusterOrder);
-               // add one more depth to work as padding for linear scale
-               var depthsScale=  d3.extent(depths);
+                var clusterOrder = nodes.map(function(d) { return d.depth});
 
-               depthsScale[1] = depthsScale[1] + 1;
+                console.log(clusterOrder);
+                // add one more depth to work as padding for linear scale
+                var depthsScale=  d3.extent(depths);
+
+                depthsScale[1] = depthsScale[1] + 1;
 
 
 
-               var xScaleTime = d3.scale.linear()
-                   .domain(depthsScale)
-                   .range([0, xScale.rangeBand()]);
+                var xScaleTime = d3.scale.linear()
+                .domain(depthsScale)
+                .range([0, xScale.rangeBand()]);
 
-               var branchingPoints = _.countBy(nodes, function(n) { return n.depth});
+                var branchingPoints = _.countBy(nodes, function(n) { return n.depth});
 
-               // find the at which depth branching is required.
-               branchingPoints = Object.keys(_.pick(branchingPoints, function(d){ return d > 1}));
+                // find the at which depth branching is required.
+                branchingPoints = Object.keys(_.pick(branchingPoints, function(d){ return d > 1}));
 
-               branchingPoints = branchingPoints.map(function(n){return parseInt(n)})
+                branchingPoints = branchingPoints.map(function(n){return parseInt(n)})
 
 
 
                 console.log(branchingPoints)
-               // finding the yMax, which is detremined by the vaf score
-              var yMax = d3.max(nodes, function(n) {
+                // finding the yMax, which is detremined by the vaf score
+                var yMax = d3.max(nodes, function(n) {
                     return d3.max(n.cluster.score, function(d) { return d.x  })
                });
 
 
-               // now we need to buy the yScale; this will be a linear scale, but modification will have to be done later
-               // we need 2 yscales here a lower one to measure the lower end, and a higher one to measure the higher end ,
-               // this can be simply done by flippign the domain.
-               var yScaleTop = d3.scale.linear()
-                                .domain([0, yMax])
-                                .range([0,height ]);
+                // now we need to buy the yScale; this will be a linear scale, but modification will have to be done later
+                // we need 2 yscales here a lower one to measure the lower end, and a higher one to measure the higher end ,
+                // this can be simply done by flippign the domain.
+                var yScaleTop = d3.scale.linear()
+                .domain([0, yMax])
+                .range([0,height ]);
 
 
-               var _yScaleTop= yScaleTop.copy();
+                var _yScaleTop= yScaleTop.copy();
 
 
-               var yScaleBottom = d3.scale.linear()
-                                        .domain([0, yMax])
-                                        .range([height,0]);
+                var yScaleBottom = d3.scale.linear()
+                .domain([0, yMax])
+                .range([height,0]);
 
                 // the different between the normal link node and a fishplot is that branching do not happen at the same time,
-               // therefore the value of x must change accordingly as well as the y value.
-               // The yvalue should change according to the vaf score.
+                // therefore the value of x must change accordingly as well as the y value.
+                // The yvalue should change according to the vaf score.
 
 
-               // there are 5 time point to each. ( polygon )
+                // there are 5 time point to each. ( polygon )
 
-               function constructPath(d, tp){
+                function constructPath(d, tp){
 
 
                 //check if timepoint is part of a branching event
@@ -289,7 +350,7 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                }
 
 
-               function plotTimePoint(p){
+                function plotTimePoint(p){
 
 
                    var cell = d3.select(this);
@@ -319,28 +380,32 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                }
 
 
-               var svg = d3.select("fishPlot").append("svg")
-                   .attr("width", width + margin.right + margin.left)
-                   .attr("height", height + margin.top + margin.bottom)
-                   .append("g")
-                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                var svg = d3.select("fishPlot").append("svg")
+                .attr("width", width + margin.right + margin.left)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-               var main = svg.selectAll("main")
-                   .data(timePoints)
-                   .enter()
-                   .append("g")
-                   .attr("id", function(d,i) { return i })
-                   .attr("transform", function(d) { console.log(d);return "translate(" + xScale(d) + ")" })
-                   .each(plotTimePoint);
+                var main = svg.selectAll("main")
+                .data(timePoints)
+                .enter()
+                .append("g")
+                .attr("id", function(d,i) { return i })
+                .attr("transform", function(d) { console.log(d);return "translate(" + xScale(d) + ")" })
+                .each(plotTimePoint);
+                }
+
+                **/
            }
-
-             **/
-
 
            scope.$watch('data', function(newVal, oldVal){
                if(newVal !== undefined){
                    fishPlot(newVal)
+
+                   console.log(newVal)
+
+                   console.log('called')
                }
 
 

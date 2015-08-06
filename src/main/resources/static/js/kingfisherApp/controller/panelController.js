@@ -37,7 +37,7 @@ angular.module('kingFisherApp')
                 $scope.newick = { newick : newick , clusters : nodeProfiles};
                 $scope.table = plotParsers.parseTable(vafData, clusters );
                 $scope.fishbone = { 'value' : fishBones, 'clusters' : clusters };
-                $scope.fishplot =  {'value' : fishBones, 'clusters' : clusters , 'treeData' : tree };
+                $scope.fishplot =  {'structure' : fishBones, 'clusters' : clusters , 'value' : tree };
             })
         };
 

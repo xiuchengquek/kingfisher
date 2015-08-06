@@ -3,30 +3,6 @@ angular.module('kingFisherApp').factory('fishPlotFactory', function () {
 
 
     // function that do pairwise comparision to ensure that the mutations are ordered according to their vaf score.
-    /**
-    var recursiveFind = function (input, obj) {
-        if (input.length !== Object.keys(obj).length) {
-            var currentMutation = input.shift();
-            obj[currentMutation.cluster] = [];
-            angular.forEach(input, function (value) {
-                // if score is smaller than the next score, then the next member must one of parent of the current mutation
-                if (currentMutation.score < value.score){
-                    obj[currentMutation.cluster].push(value.cluster)
-                }
-                // sometimes they might have the same score, but they are a different group, in this case we give them
-                // alphabetical order
-                else if (currentMutation.score === value.score && currentMutation.cluster > value.cluster){
-                    obj[currentMutation.mut].push(value.cluster)
-                }
-            });
-            input.push(currentMutation);
-            recursiveFind(input, obj)
-        }
-        return obj
-    };
-
-    **/
-
     var recursiveFindNew = function(input, obj){
 
         if (input.length !== Object.keys(obj).length) {
@@ -129,14 +105,8 @@ angular.module('kingFisherApp').factory('fishPlotFactory', function () {
         var unique    = (_.uniq(possiblePaths, function (d) {
             return d.mut
         }));
-
         return unique
-
-
-
-
-
-    }
+    };
 
 
     //function that do the following 1) find branching paths and assemble them according to their length.
@@ -265,15 +235,13 @@ angular.module('kingFisherApp').factory('fishPlotFactory', function () {
 
 
     fishPlotAlgo.parseFishBone = function(input){
-
         var path = fishPlotAlgo.findMultipleNew(input, {});
         var shortestPath = fishPlotAlgo.findShortest(path);
         var assembledPath = fishPlotAlgo.assemblePathNew(shortestPath);
         var tree = fishPlotAlgo.constructTreeNew(assembledPath);
         return tree
+    };
 
-
-    }
 
     fishPlotAlgo.constructTree = function(input) {
         var paths = fishPlotAlgo.findPaths(input.value);
