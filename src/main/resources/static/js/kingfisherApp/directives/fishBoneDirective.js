@@ -70,6 +70,12 @@ angular.module('kingFisherApp')
                         .attr("transform", function(d) {
                             return "translate(" + d.y + "," + d.x + ")"; });
 
+
+
+
+
+
+
                     nodeEnter.append("circle")
                         .attr("r", 10)
                         .attr('fill', function(d){
