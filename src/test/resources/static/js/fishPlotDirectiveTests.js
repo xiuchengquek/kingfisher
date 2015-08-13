@@ -9,8 +9,10 @@ describe('fishplot directive', function(){
 
     // angular components
     var $compile, $rootScope, scope, element;
+
     // user defined variables
-    var mockFishData, mockTree, mockCluster, compiled, html;
+
+    var mockNodes, mockTimePoint;
 
 
     beforeEach(module('kingFisherApp'));
@@ -21,87 +23,51 @@ describe('fishplot directive', function(){
         scope = _$rootScope_.$new();
 
 
-
-        mockFishData  = {
-            "SampleA-1" :
-                [
-                    {
-                        'cluster': '#aec7e8',
-                        'members': ['GeneA_g.[100A>C]', 'GeneB_g.[1000G>T]', 'GeneC_g.[1000G>T]'],
-                        'score': 0.48,
-                    },
-                    {
-                        'cluster': '#ff0000',
-                        'members': ['GeneD_g.[1000G>T]', 'GeneE_g.[1000G>T]'],
-                        'score': 0.38,
-                    },
-                    {
-                        'cluster': '#1f77b4',
-                        'members': ['GeneF_g.[1000G>T]'],
-                        'score': 0.1,
-                    }
-                ],
-            "SampleA-2" :
-                [
-                    {
-                        'cluster': '#aec7e8',
-                        'members': ['GeneA_g.[100A>C]', 'GeneB_g.[1000G>T]', 'GeneC_g.[1000G>T]'],
-                        'score': 0.55,
-                    },
-                    {
-                        'cluster': '#ff0000',
-                        'members': ['GeneD_g.[1000G>T]', 'GeneE_g.[1000G>T]'],
-                        'score': 0.19,
-                    },
-                    {
-                        'cluster': '#1f77b4',
-                        'members': ['GeneF_g.[1000G>T]'],
-                        'score': 0.24,
-                    }
-                ],
-            "SampleA-3" :
-                [
-                    {
-                        'cluster': '#aec7e8',
-                        'members': ['GeneA_g.[100A>C]', 'GeneB_g.[1000G>T]', 'GeneC_g.[1000G>T]'],
-                        'score': 0.53,
-                    },
-                    {
-                        'cluster': '#ff0000',
-                        'members': ['GeneD_g.[1000G>T]', 'GeneE_g.[1000G>T]'],
-                        'score': 0.07,
-                    },
-                    {
-                        'cluster': '#1f77b4',
-                        'members': ['GeneF_g.[1000G>T]'],
-                        'score': 0.32,
-                    }
-                ],
+        var parent1 = {
+            'mut' : '#aec7e8',
+            'depth' : 0,
+            'x' : 0.5,
+            'y' : 0,
+            'members': ['GeneA_g.[100A>C]', 'GeneB_g.[1000G>T]', 'GeneC_g.[1000G>T]'],
+            'score' :{ 'SampleA-1' :  0.48, 'SampleA-2' :  0.55, 'SampleA-3' : 0.53 },
+            'branching' : false
         };
 
-
-        mockCluster = {
-            '#aec7e8' : ['GeneA_g.[100A>C]', 'GeneB_g.[1000G>T]', 'GeneC_g.[1000G>T]'],
-            '#ff0000' : ['GeneD_g.[1000G>T]', 'GeneE_g.[1000G>T]'],
-            '#1f77b4' : ['GeneF_g.[1000G>T]']
+        var children1 = {
+            'mut' : '#ff0000',
+            'depth' : 1,
+            'x' : 0.25,
+            'y' : 1,
+            'members': ['GeneD_g.[1000G>T]', 'GeneE_g.[1000G>T]'],
+            'score' : {'SampleA-1' : 0.38,'SampleA-2' : 0.19, 'SampleA-3'  : 0.07},
+            'branching' : true
         };
 
+        var children2 = {
+            'mut' : '#1f77b4',
+            'depth' : 1,
+            'x' : 0.75,
+            'y' : 1,
+            'members': ['GeneF_g.[1000G>T]'],
+            'score' : { 'SampleA-1' : 0.1, 'SampleA-2' : 0.24, 'SampleA-3' : 0.32},
+            'branching' : true
 
 
+        };
 
-        mockTree = {
-            "mut"  : "#aec7e8",
-            "children" : [
-                {
-                    "mut": "#ff0000",
-                    "parent" : "#aec7e8"
-                },
-                {
-                    "mut": "#1f77b4",
-                    "parent" : "#aec7e8"
-                }
-            ]
-        }
+        parent1.children = [children2,  children1 ];
+        children1.parent = parent1;
+        children2.parent = parent1;
+        mockNodes  = [ parent1, children1, children2 ]
+
+
+        mockTimePoint = [
+
+            "SampleA-1","SampleA-2","SampleA-3"
+
+
+        ];
+
 
 
 
@@ -117,13 +83,12 @@ describe('fishplot directive', function(){
     }));
 
     it('Testing that the number of time panel' +
-        ' generated will be equivalent to the number of time points', function(){
+        ' generated will be equivalent to the number of time points and transformation works', function(){
 
 
         scope.fishplot = {
-            'structure' : mockTree,
-            'clusters' : mockCluster,
-            'value' : mockFishData
+            'value' : mockNodes,
+            'timePoint' : mockTimePoint
         };
         scope.$digest();
         // use jquery to select nodes.
@@ -132,16 +97,38 @@ describe('fishplot directive', function(){
         //adding an additional timepoint
 
         scope.fishplot.value["SampleA-4"] = angular.copy(scope.fishplot.value["SampleA-3"])
+        scope.fishplot.timePoint.push("SampleA-4")
+
         compiled(scope)
         scope.$digest();
         expect($(element.html()).find('g.timePanel').length).toBe(4);
 
 
 
+
+
+
     });
 
 
-    it('Testing that the ')
+    it('test that attached timepoint data is correct', function(){
+
+
+
+        scope.fishplot = {
+            'value' : mockNodes,
+            'timePoint' : mockTimePoint
+        };
+        scope.$digest();
+        // use jquery to select nodes.
+        expect(($(element.html()).find('g.timePanel'))).toBe('lol');
+
+
+
+
+
+
+    })
 
 
 

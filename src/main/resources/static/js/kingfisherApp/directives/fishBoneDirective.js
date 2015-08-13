@@ -13,6 +13,9 @@ angular.module('kingFisherApp')
 
             templateUrl :"js/kingfisherApp/directives/templates/fishboneplot.html",
 
+
+
+
             link : function(scope, elem, attr){
 
                 function plot(source) {
@@ -74,11 +77,11 @@ angular.module('kingFisherApp')
                         })
 
                     nodeEnter.selectAll('g.node')
-                        .data( function (d) { console.log(d) ;return clusters[d.mut]})
+                        .data( function (d) { return clusters[d.mut]})
                         .enter()
                         .append('text')
                         .attr("dy", function(d, i) { return (i * 15) + 30 + 'px'})
-                        .text(function(d) { console.log(d); return d})
+                        .text(function(d) { return d})
 
 
                     // Declare the links
@@ -96,8 +99,16 @@ angular.module('kingFisherApp')
                         plot(newVal)
 
                     }
+
                 })
+
+
+
+
             }
+
+
+
         }
     });
 

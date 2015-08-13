@@ -247,7 +247,177 @@ angular.module('kingFisherApp').factory('fishPlotFactory', function () {
         var paths = fishPlotAlgo.findPaths(input.value);
         var tree = fishPlotAlgo.assemblePath(paths, input.nodeProfile)
         return tree
+    };
+
+
+    function parseFishPlot(input, timePoint, nodes){
+
+        var results = [];
+        var startScore = null;
+        nodes = nodes.map(function(d) {d.depth = parseInt(d.depth); return d});
+        var depths = nodes.map(function(d) { return d.depth});
+        // find the number of layers in the cluster
+        var branchingDepth = (_.filter(_.countBy(depths, _.identity), function(v, k) { return v > 1   }));
+
+        angular.forEach(timePoint, function(value, idx){
+            // retrieve all information regarding time point data
+            var adjustedData = {};
+            var data = input[value];
+            var max  = d3.max(data, function(d){ return d.score });
+
+            angular.forEach(data, function(obj){
+                // divide each time point with the start
+                obj.adjustedEndFactor  =  Math.floor(((obj.score / max)*100))/100;
+                var nodeObj = nodes.filter(function(d){ return d.mut == obj.cluster})[0];
+                obj.depth = nodeObj.depth;
+
+                if(idx === 0){
+                    obj.adjustedStartFactor = null;
+                    if ( branchindDepth === obj.depth) {
+                        obj.branching = true;
+                    }
+                }
+                else {
+                    var arr = results[idx-1]['values'];
+                    var previousObj = arr.filter(function(d){ return d.cluster === obj.cluster })[0];
+                    obj.adjustedStartFactor = previousObj.adjustedEndFactor;
+                }
+            });
+            adjustedData['timePoint']  = value;
+            adjustedData['startScore'] = startScore
+            adjustedData['endScore'] = max;
+            adjustedData['values'] = data;
+            startScore = max;
+            results.push(adjustedData)
+        });
+
+        return results
     }
+
+
+    fishPlotAlgo.addGroupMembers = function(nodes, clusters, data){
+        var clusterScore = {};
+        angular.forEach(data, function(value, key){
+            angular.forEach(value, function(val, idx){
+                clusterScore[val.cluster]  = clusterScore[val.cluster] || {};
+                clusterScore[val.cluster][key] = val.score ;
+            });
+        });
+
+        angular.forEach(nodes, function(value, idx){
+            var members = clusters[value.mut];
+            value.members = members;
+            value.score = clusterScore[value.mut]
+        })
+    };
+
+    fishPlotAlgo.addBranchingEvents = function(nodes){
+        console.log(nodes)
+
+
+        var depths = nodes.map(function(d) { return d.depth});
+        // find the number of layers in the cluster
+
+        var branchingDepth = [];
+
+        angular.forEach(_.countBy(depths, _.identity), function(value, key){
+            if (value > 1){  this.push(Number(key))}
+        }, branchingDepth);
+
+        var depthCounter =  {};
+
+
+
+        angular.forEach(nodes, function(value, idx){
+            if ( branchingDepth.indexOf(value.depth) !== -1 ){
+
+
+                depthCounter[value.depth] = depthCounter[value.depth] || 0;
+                value.branching = true;
+                value.branchingOrder =  depthCounter[value.depth]
+                depthCounter[value.depth]++
+
+            }
+        })
+
+
+    };
+
+    // functino not in used yet, trying altnernative methdos.
+    fishPlotAlgo.adjustScore = function(data) {
+        angular.forEach(data, function(value, index){
+
+            if(value.children) {
+
+                var scoreTotal = value.children.reduce(function (preV, curV, idx, arr) {
+                    var val = {};
+                    angular.forEach(curV, function (score, key) {
+                        val.key = preV[key] + score
+                    })
+                    return val
+
+                })
+
+                value.children.map(function(d){
+                    anuglar.forEach(d.score, function(val, key){
+                        d.score[key] = Math.floor((val * value.score[key] / scoreTotal[key]) * 100 ) / 100;
+                    })
+                })
+            }
+        })
+    };
+
+
+
+    fishPlotAlgo.parseFishPlotNew = function(input, clusters, timePoint){
+        var data = angular.copy(input);
+        var tree = d3.layout.tree();
+        var nodes = fishPlotAlgo.parseFishBone(data);
+        nodes =  tree.nodes(nodes);
+
+
+
+
+
+
+
+        fishPlotAlgo.addGroupMembers(nodes, clusters, data);
+
+        var depthCounter = {};
+
+        nodes = nodes.sort(function(a,b) { return a.score[timePoint[0]] - b.score[timePoint[0]]})
+        angular.forEach(nodes, function(value, idx){
+
+            depthCounter[nodes.depth] = depthCounter[nodes.depth] || 0;
+            nodes.branchingOrder = depthCounter[nodes.depth];
+            depthCounter[nodes.depth] ++
+
+
+
+
+        });
+        nodes = _.sortBy(nodes, 'depth')
+
+
+
+        fishPlotAlgo.addBranchingEvents(nodes);
+        return nodes
+
+    };
+
+
+    // timePoint is required to ensure that the data are always in order since keys in objects do not guarentee order
+    fishPlotAlgo.parseFishPlot = function(input, timePoint){
+        // copy first to prevent mixed up
+        var data = angular.copy(input);
+        var tree = d3.layout.tree();
+        var nodes = fishPlotAlgo.parseFishBone(data);
+        nodes =  tree.nodes(nodes);
+        console.log(nodes)
+        return parseFishPlot(data, timePoint, nodes);
+    };
+
+
 
     return fishPlotAlgo
 });
