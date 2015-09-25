@@ -1,0 +1,17 @@
+<form name="fishPlotConfiguration" class="fpConfig">
+    <h3> X Axis Configuration </h3>
+    <label > <input name="fishPlotXScale" type="radio" ng-model="modelType.xScale" value="fishBoneOrder" ng-change="changeXScale()" checked="checked"> Use Order in FishBone as determinant </label>
+    <label> <input name="fishPlotXScale" type="radio" ng-model="modelType.xScale" value="vafScore" ng-change="changeXScale()"> Use VAF score as determinant </label>
+    <label ng-show="modelType.xScale === 'vafScore'">Adjust Delay in Plateau  <input  ng-change="changeXScale()" ng-model="modelType.cutoff" type=range  min=0 value="cutoff" max=10 step=1/> </label>
+    <label ng-show="modelType.xScale === 'vafScore'">Use Exponential Scale  <input  ng-change="changeXScale()" ng-model="modelType.exponential" type=checkbox/> </label>
+
+
+
+    <h3> Y Axis Configuration </h3>
+
+
+
+</form>
+
+
+

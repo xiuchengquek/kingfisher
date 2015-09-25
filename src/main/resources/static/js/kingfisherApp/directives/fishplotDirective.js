@@ -12,23 +12,15 @@ angular.module('kingFisherApp').directive('fishplot', function(){
            modelType : '='
 
        },
-       template : '<form name="fishPlotConfiguration"> ' +
-
-           '<h3> X Axis Configuration </h3>' +
-
-                '<label> <input name="fishPlotXScale" type="radio" ng-model="modelType.xScale" value="fishBoneOrder" ng-change="changeXScale(modelType)"> Use Order in FishBone as determinant </label>' +
-                '<label ng-show="modelType.xScale === \'fishBoneOrder\'"><input name"cutoffValue" type="text" ng-model="modelType.value" ng-change="changeScale(modelType"> </label>' +
-                '<label> <input name="fishPlotXScale" type="radio" ng-model="modelType.xScale" value="vafScore" ng-change="changeXScale(modelType)"> Use VAF score as determinant </label>' +
-                '<label ng-show="modelType.xScale === \'vafScore\'"><input name"cutoffValue" type="text" ng-model="modelType.value" ng-change="changeScale(modelType"> </label>' +
-
-       '</form>',
-
+       templateUrl : "js/kingfisherApp/directives/templates/fishplot.html",
        controller: function($scope){
-           $scope.modelType = {}
+           $scope.modelType = {'xScale' : 'fishBoneOrder',
+                               'cutoff' : 5,
+                               'exponential' : false};
 
 
-           $scope.changeXScale = function(modelType){
-               $scope.$broadcast('scaleChanged', $scope.modelType)
+           $scope.changeXScale = function(){
+               $scope.$broadcast('scaleChange', $scope.modelType)
            }
       },
 
@@ -61,21 +53,7 @@ angular.module('kingFisherApp').directive('fishplot', function(){
            }
 
 
-           function adjustBranching(node) {
-
-
-
-
-
-
-
-
-           }
-
-
-
-
-           function parseFirstTimePoint(node, tpName, metrics  ) {
+           function parseByDepth(node, tpName, metrics, cutoff  ) {
 
                /**
                 *
@@ -95,17 +73,13 @@ angular.module('kingFisherApp').directive('fishplot', function(){
 
                var xScale0 = metrics['xScale0'];
 
-               var endPoint = metrics.width / 2;
+               var endPoint = metrics.width *0.75;
                // first time point scale, the first x value is based o
 
                // add a pseudo depth to add some spacing
                var xScale1 = d3.scale.linear()
                    .domain(d3.extent(metrics.depth))
                    .range([100, endPoint]);
-
-
-
-
 
                var yTopScale = d3.scale.linear()
                    .domain([0, metrics.xMax0])
@@ -154,21 +128,15 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                x4 = x1, y4 = y3;
 
                // to maintain reference
-               node.linePoints[0].x  = x0, node.linePoints[0].y  = y0;
-               node.linePoints[1].x  = x1, node.linePoints[1].y  = y1;
-               node.linePoints[2].x  = x2, node.linePoints[2].y  = y2;
-               node.linePoints[3].x  = x3, node.linePoints[3].y  = y3;
-               node.linePoints[4].x  = x4, node.linePoints[4].y  = y4;
-
-
-
-
-
-
+               node.linePoints[tpName][0].x  = x0, node.linePoints[tpName][0].y  = y0;
+               node.linePoints[tpName][1].x  = x1, node.linePoints[tpName][1].y  = y1;
+               node.linePoints[tpName][2].x  = x2, node.linePoints[tpName][2].y  = y2;
+               node.linePoints[tpName][3].x  = x3, node.linePoints[tpName][3].y  = y3;
+               node.linePoints[tpName][4].x  = x4, node.linePoints[tpName][4].y  = y4;
            }
 
 
-           function parseByScore(node, tpName, metrics  ) {
+           function parseByScore(node, tpName, metrics, cutoff  ) {
 
                /**
                 *
@@ -188,13 +156,13 @@ angular.module('kingFisherApp').directive('fishplot', function(){
 
                var xScale0 = metrics['xScale0'];
 
-               var endPoint = metrics.width / 2;
+               var endPoint = metrics.endPoint
                // first time point scale, the first x value is based o
 
                // add a pseudo depth to add some spacing
                var xScale1 = d3.scale.linear()
                    .domain([metrics.xMax0, 0])
-                   .range([100, endPoint]);
+                   .range([100, metrics.endPoint]);
 
                var yTopScale = d3.scale.linear()
                    .domain([0, metrics.xMax0])
@@ -230,10 +198,97 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                        return d.score[tpName]
                    });
 
-                                       x1 = xScale1(currentScore * 0.8), y1 = yTopScale(currentScore);
+                   x1 = xScale1(currentScore * cutoff), y1 = yTopScale(currentScore);
                }
                else {
-                   x1 = xScale1(currentScore * 0.8 ), y1 = yTopScale(currentScore)
+                   x1 = xScale1(currentScore * cutoff), y1 = yTopScale(currentScore)
+               }
+
+
+               x2 = endPoint , y2 = y1;
+               x3 = x2, y3 = yBottomScale(currentScore);
+               x4 = x1, y4 = y3;
+
+                // to maintain reference
+               node.linePoints[tpName][0].x  = x0, node.linePoints[tpName][0].y  = y0;
+               node.linePoints[tpName][1].x  = x1, node.linePoints[tpName][1].y  = y1;
+               node.linePoints[tpName][2].x  = x2, node.linePoints[tpName][2].y  = y2;
+               node.linePoints[tpName][3].x  = x3, node.linePoints[tpName][3].y  = y3;
+               node.linePoints[tpName][4].x  = x4, node.linePoints[tpName][4].y  = y4;
+
+
+
+           }
+
+
+
+           function parseByScoreExp(node, tpName, metrics, cutoff  ) {
+
+               /**
+                *
+                *     x1_ _ _x2
+                *    /
+                * x0/
+                *   \
+                *    \x4_ _ _x3
+                *
+                */
+
+               // this function should return 6 points
+               var x0, x1, x2, x3, x4;
+               var y0, y1, y2, y3, y4;
+
+               var nodeDepth = Number(node.depth);
+
+               var xScale0 = metrics['xScale0'];
+
+               var endPoint = metrics.endPoint
+               // first time point scale, the first x value is based o
+
+               // add a pseudo depth to add some spacing
+               var xScale1 = d3.scale.pow()
+                   .domain([metrics.xMax0, 0])
+                   .range([100, metrics.endPoint])
+                   .exponent(2);
+
+               var yTopScale = d3.scale.linear()
+                   .domain([0, metrics.xMax0])
+                   .range([metrics.height / 2, 0]);
+
+               var yBottomScale = d3.scale.linear()
+                   .domain([0, metrics.xMax0])
+                   .range([metrics.height / 2, metrics.height]);
+
+
+
+
+               node.adjustedScore         = node.adjustedScore || {};
+               node.adjustedScore[tpName] = node.score[tpName];
+
+
+               //adjustByRatio(node, tpName);;
+               adjustByCutOff(node, tpName, 1)
+
+
+
+               // Get current score
+               var currentScore =  node.score[tpName]
+
+
+               x0 = xScale1(currentScore), y0 = metrics.height / 2;
+
+               if (node.children) {
+                   node.score[tpName]
+                   var children = node.children;
+                   // find the next children (ordered by score )
+                   var nearestChildScore = d3.max(children, function (d) {
+                       return d.score[tpName]
+                   });
+
+                   x1 = xScale1(currentScore * cutoff), y1 = yTopScale(currentScore);
+               }
+               else {
+                   x1 = xScale1(currentScore * cutoff), y1 = yTopScale(currentScore)
                }
 
 
@@ -244,74 +299,54 @@ angular.module('kingFisherApp').directive('fishplot', function(){
 
 
                // to maintain reference
-               node.linePoints[0].x  = x0, node.linePoints[0].y  = y0;
-               node.linePoints[1].x  = x1, node.linePoints[1].y  = y1;
-               node.linePoints[2].x  = x2, node.linePoints[2].y  = y2;
-               node.linePoints[3].x  = x3, node.linePoints[3].y  = y3;
-               node.linePoints[4].x  = x4, node.linePoints[4].y  = y4;
+               // to maintain reference
+               node.linePoints[tpName][0].x  = x0, node.linePoints[tpName][0].y  = y0;
+               node.linePoints[tpName][1].x  = x1, node.linePoints[tpName][1].y  = y1;
+               node.linePoints[tpName][2].x  = x2, node.linePoints[tpName][2].y  = y2;
+               node.linePoints[tpName][3].x  = x3, node.linePoints[tpName][3].y  = y3;
+               node.linePoints[tpName][4].x  = x4, node.linePoints[tpName][4].y  = y4;
            }
 
-
            function reAdjustBranches(node, tpName) {
+               if (node.children) {
+                   var siblingSum = _.sum(node.children.map(function (d) {
+                       return d.score[tpName]
+                   }));
+                   var nodePoints = node.linePoints[tpName];
+                   var nodeHeight = nodePoints[3].y - nodePoints[2].y;
 
-                              if (node.children) {
+                   var scaleYParent = d3.scale.linear()
+                       .domain([0, siblingSum])
+                       .range([10, nodeHeight - 10]);
 
-                   if (node.children) {
-
-
-                       var siblingSum = _.sum(node.children.map(function (d) {
-                           return d.score[tpName]
-                       }));
-                       var nodePoints = node.linePoints;
-                       var nodeHeight = nodePoints[3].y - nodePoints[2].y;
-
-                       var scaleYParent = d3.scale.linear()
-                           .domain([0, siblingSum])
-                           .range([10, nodeHeight - 10]);
-
-                       var childrenHeight = node.children.map(function (d) {
-                           return scaleYParent(d.score[tpName])
-                       });
+                   var childrenHeight = node.children.map(function (d) {
+                       return scaleYParent(d.score[tpName])
+                   });
+                   var offset = nodePoints[1].y;
 
 
-                       var offset = nodePoints[1].y;
+                   angular.forEach(node.children, function (value, idx) {
 
+                       var childHeight = childrenHeight[idx];
+                       if (idx === 0) {
+                           node.children[idx].linePoints[tpName][0].y = offset + childHeight / 2;
+                           node.children[idx].linePoints[tpName][1].y = offset + 10 ;
+                           node.children[idx].linePoints[tpName][2].y = offset + 10 ;
+                           node.children[idx].linePoints[tpName][3].y = offset + childHeight ;
+                           node.children[idx].linePoints[tpName][4].y = offset + childHeight ;
 
-                       angular.forEach(node.children, function (value, idx) {
-
+                       }
+                       else {
+                           var accumulatedSum = _.sum(childrenHeight.slice(0,idx));
                            var childHeight = childrenHeight[idx];
-                           if (idx === 0) {
-                               node.children[idx].linePoints[0].y = offset + childHeight / 2;
-                               node.children[idx].linePoints[1].y = offset + 10 ;
-                               node.children[idx].linePoints[2].y = offset + 10 ;
-                               node.children[idx].linePoints[3].y = offset + childHeight ;
-                               node.children[idx].linePoints[4].y = offset + childHeight ;
+                           node.children[idx].linePoints[tpName][0].y = offset + accumulatedSum + childHeight / 2;
+                           node.children[idx].linePoints[tpName][1].y = offset + 10 + accumulatedSum;
+                           node.children[idx].linePoints[tpName][2].y = offset + 10 + accumulatedSum;
+                           node.children[idx].linePoints[tpName][3].y = offset + accumulatedSum + childHeight -10 ;
+                           node.children[idx].linePoints[tpName][4].y = offset + accumulatedSum + childHeight -10 ;
 
-                           }
-
-                           else {
-                               var accumulatedSum = _.sum(childrenHeight.slice(0,idx));
-                               var childHeight = childrenHeight[idx];
-
-                               node.children[idx].linePoints[0].y = offset + accumulatedSum + childHeight / 2;
-                               node.children[idx].linePoints[1].y = offset + 10 + accumulatedSum;
-                               node.children[idx].linePoints[2].y = offset + 10 + accumulatedSum;
-                               node.children[idx].linePoints[3].y = offset + accumulatedSum + childHeight -10 ;
-                               node.children[idx].linePoints[4].y = offset + accumulatedSum + childHeight -10 ;
-
-                           }
-
-
-                       })
-
-
-
-
-                   }
-
-
-
-
+                       }
+                   })
                }
 
 
@@ -343,12 +378,6 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                })
            };
 
-           function constructPath(d, tp, tpName, metrics){
-                if (tp == 0){
-                    parseFirstTimePoint(d, tpName, metrics);
-                    reAdjustBranches(d, tpName)
-                }
-           };
 
 
            function joinPath(node){
@@ -369,6 +398,17 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                    }
                }, pathString);
                return pathString.join(' ')
+
+           }
+
+           function reAdjustLaterTimePoint(data, timePoint){
+
+
+
+
+
+
+
 
            }
 
@@ -396,26 +436,32 @@ angular.module('kingFisherApp').directive('fishplot', function(){
 
 
 
-           function fishPlot(source) {
+
+
+            // This is the main function for fishplot
+           function fishPlot(source, scaleType) {
                var data = source.value;
                var timePoint = source.timePoint;
 
-
                data = _.sortBy(data, ['depth', 'branchingOrder']);
 
-
                angular.forEach(data, function(d, idx){
+                   d.linePoints = {};
 
-                   d.linePoints = [
-                       {'x': 0, 'y': 0 },
-                       {'x': 0, 'y': 0 },
-                       {'x': 0, 'y': 0 },
-                       {'x': 0, 'y': 0 },
-                       {'x': 0, 'y': 0 }]
+                   angular.forEach(timePoint, function(t){
+                       var init =  [
+                           {'x': 0, 'y': 0 },
+                           {'x': 0, 'y': 0 },
+                           {'x': 0, 'y': 0 },
+                           {'x': 0, 'y': 0 },
+                           {'x': 0, 'y': 0 }
+                       ];
+
+                        d.linePoints[t] = init;
+                   })
 
 
                });
-
 
                //adjust data to fit make children fit into parents
 
@@ -431,19 +477,11 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                // find the y max
                //var yMax = d3.max(data, function(d){ return d3.max(_.values(d.score)) });
                // get the root node
-
-
-
-
                var depth = _.uniq(data.map(function(d){ return Number(d.depth)}));
                var addDepth = d3.max(depth) + 1;
                depth.push(addDepth);
 
-
-
-
-
-
+               var endPoint = width * 0.75;
 
                var root =  data.map(function(d){ return d.depth == 0});
 
@@ -461,7 +499,7 @@ angular.module('kingFisherApp').directive('fishplot', function(){
 
                var xScale0 = d3.scale.ordinal()
                    .domain(timePoint.slice(-(timePoint.length - 1)))
-                   .rangeRoundBands([width/2, width]);
+                   .rangeRoundBands([endPoint, width]);
 
                // store yMax, center, yScale0 and xScale0 into a single object for passing around
                var metrics = {
@@ -471,18 +509,25 @@ angular.module('kingFisherApp').directive('fishplot', function(){
                    'yScale0': yScale0,
                    'xScale0': xScale0,
                    'xMax0'  : xMax0,
-                   'depth' : depth
+                   'depth' : depth,
+                   'endPoint' : endPoint
                };
 
 
 
                angular.forEach(data, function(d, i){
-                   parseByScore(d, timePoint[0], metrics)
+                   scaleType.scale(d, timePoint[0], metrics, scaleType.cutoff)
                });
 
                angular.forEach(data, function(d, i ){
                    reAdjustBranches(d, timePoint[0])
                });
+
+
+               angular.forEach(data, function(d, i){
+                  reAdjustLaterTimePoint(d, timePoint[0])
+               });
+
 
                var svg = d3.select(element[0]).append("svg")
                    .attr("width", width + margin.right + margin.left)
@@ -504,24 +549,25 @@ angular.module('kingFisherApp').directive('fishplot', function(){
 
 
 
-
-
-
-
-
-
-
            }
 
            scope.$watchCollection('data', function(newVal, oldVal){
                if(newVal !== undefined){
-                   fishPlot(newVal);
+                   fishPlot(newVal, {scale : parseByDepth} );
                }
            })
 
            scope.$on('scaleChange', function(event, val){
-
-
+               var scaleType = {};
+               if ( val.xScale == 'fishBoneOrder') {
+                   scaleType.scale = parseByDepth;
+                   scaleType.cutoff = val.cutoff;
+               }
+               else {
+                   scaleType.scale = parseByScoreExp;
+                   scaleType.cutoff = val.cutoff / 10;
+               }
+               fishPlot(scope.data, scaleType)
            })
 
 
