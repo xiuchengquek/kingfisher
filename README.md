@@ -117,18 +117,18 @@ The backend unit test is run by JUnit, Frontend is tested with jasmine run by ka
 
 ### Components of the backend application
 
-1..[KingFisherApplication] (src/main/java/org/oncoblocks/kingfisher/KingFisherApplication.java)
+1.[KingFisherApplication] (src/main/java/org/oncoblocks/kingfisher/KingFisherApplication.java)
     - Main application. see springboot documentation for more infomration
 2.[KingFisherController) {src/main/java/org/oncoblocks/kingfisher/KingFisherController.java)
     - View to serve html pages.
 
-3.[KingFisherHClust] {src/main/java/org/oncoblocks/kingfisher/KingFisherHClust.java)
+3.[KingFisherHClust] (src/main/java/org/oncoblocks/kingfisher/KingFisherHClust.java)
     - Conduct hierarchical Clustering for vafscore
 
-4.[KingFisherRestController]  {src/main/java/org/oncoblocks/kingfisher/KingFisherRestController.java)
+4.[KingFisherRestController]  (src/main/java/org/oncoblocks/kingfisher/KingFisherRestController.java)
     - View , contain route logic for rest api
 
-5.[KingFisherStaticConfig]  {src/main/java/org/oncoblocks/kingfisher/KingFisherStaticConfig.java)
+5.[KingFisherStaticConfig]  (src/main/java/org/oncoblocks/kingfisher/KingFisherStaticConfig.java)
     - Object based configuration for resources location and view resolver
 
 6.[KingFisherRepository] (src/main/java/org/oncoblocks/kingfisher/KingFisherRepository)
