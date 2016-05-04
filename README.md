@@ -4,13 +4,13 @@ Tumor Heterogeneity Analysis and Visualization Tool
 
 ## Updates
 
--02/06/2015 : Establish basic framework for testing. Provided basic documentation. Working landing page.
--15/06/2015 : Added Hiercherical Clustering Service at the server backend. Added Service to store data at the from end
+- 02/06/2015 : Establish basic framework for testing. Provided basic documentation. Working landing page.
+- 15/06/2015 : Added Hiercherical Clustering Service at the server backend. Added Service to store data at the from end
 `dataFactory`.
--16/06/2015 : Added Parser for Maf and Clinical Data
--19/06/2015 : Boxplot, line plot and phylogenetic tree. Example dataset.
--25/09/2015 : Working boxplot, fishbone, hiercherical clustering plot and prelimiary fishplot
--05/05/2016 : Fixed readme, add application.properties files
+- 16/06/2015 : Added Parser for Maf and Clinical Data
+- 19/06/2015 : Boxplot, line plot and phylogenetic tree. Example dataset.
+- 25/09/2015 : Working boxplot, fishbone, hiercherical clustering plot and prelimiary fishplot
+- 05/05/2016 : Fixed readme, add application.properties files
 
 
 
