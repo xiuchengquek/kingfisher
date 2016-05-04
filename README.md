@@ -10,6 +10,10 @@ Tumor Heterogeneity Analysis and Visualization Tool
 -16/06/2015 : Added Parser for Maf and Clinical Data
 -19/06/2015 : Boxplot, line plot and phylogenetic tree. Example dataset.
 -25/09/2015 : Working boxplot, fishbone, hiercherical clustering plot and prelimiary fishplot
+-05/05/2016 : Fixed readme, add application.properties files
+
+
+
 
 
 ## Introduction
@@ -21,18 +25,29 @@ Project KingFisher a component of Oncoblock and is web-based prototype for visua
 ## Dependencies
 
 1. SQL Database - Currently KingFisher is running on MySQL. Other dialects of SQL might work but have not been tested yet.
+    - You must have a running instance of mysql before start the application
+    - See [application.properties](application.properties) and the section on [Configuration](##Configuration) for more infomration
 2. Java -  KingFisher have only been tested on Java 8.
 3. Maven - KingFisher have only been tested on maven3 ( 3.3.3 to be specific)
 
 ## Getting Started - Introduction
 
 Kingfisher is a Java Spring-boot application currently configured to work with SQL databases. To configure your database settings please edit `application.properties` file found in `src/main/resources`.
+
+## Configuration
+
 For more information regarding configuration of the `application.properties` please refer to [guide](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-placeholders-in-properties)
 By default, kingfisher will use the following environment variable for your database settings.
+
 
 1. `$sql_address` - address of your mysql server. for eg. `localhost/kfisher`
 2. `$sql_user` -  username for connecting to your MySQL server e.g. `kingfisheruser`
 3. `$sql_pass` - password used to access the MySQL.
+4. `$server_port` - port in which the application will bind to
+
+## Working Demo :
+
+A working demo has been deployed on http://kingfisherapp.z9wprtyrwa.us-west-2.elasticbeanstalk.com/
 
 ## Building / Testing KingFisher
 
@@ -92,6 +107,74 @@ In short the kingfisher app can be catogrised in 5 main plots
     ( see technical challenges below for more info)
 - Fish Plot
     - Generated using custome d3 code
+
+
+## Application Outline.
+
+The backend is running on springboot. The front end is developed using the angularjs framework. All routing is done by the server.
+The backend unit test is run by JUnit, Frontend is tested with jasmine run by karma
+
+
+### Components of the backend application
+
+1..[KingFisherApplication] (src/main/java/org/oncoblocks/kingfisher/KingFisherApplication.java)
+    - Main application. see springboot documentation for more infomration
+2.[KingFisherController) {src/main/java/org/oncoblocks/kingfisher/KingFisherController.java)
+    - View to serve html pages.
+
+3.[KingFisherHClust] {src/main/java/org/oncoblocks/kingfisher/KingFisherHClust.java)
+    - Conduct hierarchical Clustering for vafscore
+
+4.[KingFisherRestController]  {src/main/java/org/oncoblocks/kingfisher/KingFisherRestController.java)
+    - View , contain route logic for rest api
+
+5.[KingFisherStaticConfig]  {src/main/java/org/oncoblocks/kingfisher/KingFisherStaticConfig.java)
+    - Object based configuration for resources location and view resolver
+
+6.[KingFisherRepository] (src/main/java/org/oncoblocks/kingfisher/KingFisherRepository)
+    - Model, unused for now.
+
+### Components of the frontend application
+
+The frontend has a mvc designer pattern , typical of an anuglarjs application.
+
+
+#### Controllers
+
+There is only a single controller :[panelController](static/js/kingfisherApp/controller/panelController.js)
+ - The controller contains the logic that join between the different services and directives.
+
+####  Services
+The [services](static/js/kingfisherApp/services) in this applications contains code to parse data and transform the data for the different associated directives / plot
+
+- [parserFactory](static/js/kingfisherApp/services/parserFactory.js)
+    - The parserFactory contains logic to parse user input
+    - MAF parser
+- [dataFactory](static/js/kingfisherApp/services/dataFactory.js)
+    - Store converted user input data. Data is shared between different plot-specific services ( see below )
+    - Also contains method for sending data to server for hierarchical clustering
+
+- [plotsFactory](static/js/kingfisherApp/services/plotsFactory.js)
+    - Parse data from dataFactory into format for use by the different plots
+    - Also keep tracks of the different state of the plots ( NOTE: Ideally i should store this as a controller instead)
+
+
+- [fishplotFactory](static/js/kingfisherApp/services/fishplotFactory.js)
+    - LOgical for parsing the data for generation fo the fishplot
+
+
+
+#### Directives
+
+Each plot has its own directives
+
+- [boxplotDirective.js] (static/js/kingfisherApp/directives/boxplotDirective.js)
+- [fishBoneDirective.js] (static/js/kingfisherApp/directives/fishBoneDirective.js)
+- [fishplotDirective.js] (static/js/kingfisherApp/directives/fishplotDirective.js)
+- [lineplotDirective.js] (static/js/kingfisherApp/directives/lineplotDirective.js)
+- [panelDirectives.js] (static/js/kingfisherApp/directives/panelDirectives.js)
+- [phyloDirective.js] (static/js/kingfisherApp/directives/phyloDirective.js)
+- [tableDirective.js] (static/js/kingfisherApp/directives/tableDirective.js)
 
 
 ## Technical Challenges
